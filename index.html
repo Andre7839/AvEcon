@@ -1,0 +1,1523 @@
+<title>AgriVolt Ledger</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ============================= TOKENS ============================= */
+:root{
+  --paper:      #F2F1E6;
+  --surface:    #FBFAF4;
+  --surface-2:  #EFEEE0;
+  --ink:        #21261D;
+  --ink-soft:   #565C4C;
+  --muted:      #8B9078;
+  --line:       #DCDCC9;
+  --line-soft:  #E7E6D8;
+  --accent:     #B96A15;
+  --accent-ink: #6E3E0C;
+  --accent-soft:#F0DCC1;
+  --crop:       #3F6B34;
+  --crop-soft:  #DDE7D3;
+  --sky:        #2B4C6F;
+  --sky-soft:   #DAE3EC;
+
+  --good:       #0ca30c;
+  --warning:    #b8790f;
+  --serious:    #c1592f;
+  --critical:   #b3342f;
+
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100;
+  --s5:#e87ba4; --s6:#008300; --s7:#4a3aa7; --s8:#e34948;
+  --div-pos:#2a78d6; --div-neg:#e34948; --div-mid:#f0efec;
+
+  --shadow: 0 1px 2px rgba(33,38,29,0.06), 0 6px 20px -8px rgba(33,38,29,0.18);
+  --radius: 10px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:      #14160F;
+    --surface:    #1B1E14;
+    --surface-2:  #21241A;
+    --ink:        #ECEEE2;
+    --ink-soft:   #ABB098;
+    --muted:      #7B8069;
+    --line:       #33382A;
+    --line-soft:  #292E20;
+    --accent:     #E3A64A;
+    --accent-ink: #F6D9A6;
+    --accent-soft:#3A2E17;
+    --crop:       #7CB36B;
+    --crop-soft:  #23301E;
+    --sky:        #7FA8CF;
+    --sky-soft:   #1D2A38;
+
+    --good:       #0ca30c;
+    --warning:    #d99a1e;
+    --serious:    #ec835a;
+    --critical:   #e66767;
+
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
+    --s5:#d55181; --s6:#3fbf3f; --s7:#9085e9; --s8:#e66767;
+    --div-pos:#3987e5; --div-neg:#e66767; --div-mid:#383835;
+
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 10px 30px -10px rgba(0,0,0,0.5);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:      #14160F;
+  --surface:    #1B1E14;
+  --surface-2:  #21241A;
+  --ink:        #ECEEE2;
+  --ink-soft:   #ABB098;
+  --muted:      #7B8069;
+  --line:       #33382A;
+  --line-soft:  #292E20;
+  --accent:     #E3A64A;
+  --accent-ink: #F6D9A6;
+  --accent-soft:#3A2E17;
+  --crop:       #7CB36B;
+  --crop-soft:  #23301E;
+  --sky:        #7FA8CF;
+  --sky-soft:   #1D2A38;
+
+  --good:       #0ca30c;
+  --warning:    #d99a1e;
+  --serious:    #ec835a;
+  --critical:   #e66767;
+
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
+  --s5:#d55181; --s6:#3fbf3f; --s7:#9085e9; --s8:#e66767;
+  --div-pos:#3987e5; --div-neg:#e66767; --div-mid:#383835;
+
+  --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 10px 30px -10px rgba(0,0,0,0.5);
+  color-scheme: dark;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size:14.5px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{
+  font-family:"Bricolage Grotesque", "Public Sans", sans-serif;
+  font-weight:700;
+  text-wrap:balance;
+  margin:0;
+  letter-spacing:-0.01em;
+}
+.mono, .num{font-family:"IBM Plex Mono", ui-monospace, monospace; font-variant-numeric:tabular-nums;}
+a{color:var(--accent);}
+button{font-family:inherit;}
+::selection{background:var(--accent-soft);}
+
+/* ============================= LAYOUT ============================= */
+.app{
+  display:grid;
+  grid-template-columns: 372px minmax(0,1fr);
+  min-height:100vh;
+}
+.app > *{min-width:0;}
+@media (max-width: 980px){
+  .app{grid-template-columns: minmax(0,1fr);}
+}
+
+.sidebar{
+  background:var(--surface);
+  border-right:1px solid var(--line);
+  padding:22px 20px 40px;
+  position:sticky; top:0; align-self:start;
+  max-height:100vh; overflow-y:auto;
+}
+@media (max-width: 980px){
+  .sidebar{position:static; max-height:none; overflow-y:visible;}
+}
+.brand{
+  display:flex; align-items:center; gap:10px;
+  margin-bottom:4px;
+}
+.brand-mark{
+  width:34px;height:34px;border-radius:8px;
+  background:linear-gradient(135deg, var(--crop), var(--accent));
+  display:flex;align-items:center;justify-content:center;
+  font-size:17px; flex:none;
+  box-shadow: var(--shadow);
+}
+.brand h1{font-size:19px;}
+.brand-sub{font-size:11.5px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;margin-top:2px;}
+
+.field-note{
+  font-size:12px; color:var(--ink-soft); margin:10px 0 18px;
+  padding:9px 11px; background:var(--surface-2); border-radius:8px;
+  border:1px solid var(--line-soft);
+}
+
+.section{margin-top:22px;}
+.section-head{
+  display:flex; align-items:center; justify-content:space-between;
+  cursor:pointer; user-select:none;
+  padding-bottom:7px; border-bottom:1px solid var(--line);
+  margin-bottom:12px;
+}
+.section-head h2{
+  font-size:12px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--ink-soft); font-family:"Public Sans",sans-serif; font-weight:700;
+}
+.section-head .chev{color:var(--muted); font-size:11px; transition:transform .15s ease;}
+.section.collapsed .chev{transform:rotate(-90deg);}
+.section.collapsed .section-body{display:none;}
+
+.row{display:flex; gap:10px; align-items:flex-end;}
+.field{margin-bottom:12px;}
+.field label{
+  display:flex; justify-content:space-between; align-items:baseline;
+  font-size:12px; font-weight:600; color:var(--ink-soft); margin-bottom:5px;
+}
+.field label .val{font-family:"IBM Plex Mono",monospace; color:var(--accent-ink); font-weight:600; font-size:12px;}
+select, input[type=number], input[type=text]{
+  width:100%; padding:8px 9px; border-radius:7px;
+  border:1px solid var(--line); background:var(--surface);
+  color:var(--ink); font-size:13.5px; font-family:inherit;
+}
+input[type=number]{font-family:"IBM Plex Mono",monospace;}
+select:focus, input:focus{outline:2px solid var(--accent); outline-offset:1px;}
+input[type=range]{
+  width:100%; accent-color:var(--accent); height:18px; cursor:pointer;
+}
+.unit-input{position:relative;}
+.unit-input .suffix{
+  position:absolute; right:9px; top:50%; transform:translateY(-50%);
+  font-size:11.5px; color:var(--muted); pointer-events:none;
+}
+.field-2col{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+
+.chip-group{display:flex; flex-wrap:wrap; gap:6px;}
+.chip{
+  border:1px solid var(--line); background:var(--surface);
+  border-radius:999px; padding:6px 11px; font-size:12.5px; font-weight:600;
+  cursor:pointer; color:var(--ink-soft); transition:all .12s ease;
+}
+.chip:hover{border-color:var(--accent);}
+.chip.active{
+  background:var(--accent); border-color:var(--accent); color:#fff;
+}
+
+.preset-card{
+  border:1px solid var(--line); border-radius:9px; padding:11px 12px;
+  cursor:pointer; margin-bottom:8px; background:var(--surface);
+  transition: border-color .12s ease, background .12s ease;
+}
+.preset-card:hover{border-color:var(--accent);}
+.preset-card.active{
+  border-color:var(--accent); background:var(--accent-soft);
+}
+.preset-card .pt{font-weight:700; font-size:13.5px;}
+.preset-card .ps{font-size:11.5px; color:var(--muted); margin-top:2px;}
+
+.reset-btn{
+  width:100%; margin-top:18px; padding:10px; border-radius:8px;
+  border:1px dashed var(--line); background:transparent; color:var(--ink-soft);
+  font-size:12.5px; font-weight:600; cursor:pointer;
+}
+.reset-btn:hover{border-color:var(--accent); color:var(--accent-ink);}
+
+/* ============================= MAIN ============================= */
+.main{padding:26px 32px 60px; max-width:1200px;}
+.topbar{
+  display:flex; align-items:baseline; justify-content:space-between;
+  flex-wrap:wrap; gap:10px; margin-bottom:6px;
+}
+.topbar .scenario{
+  font-size:13px; color:var(--ink-soft);
+}
+.topbar .scenario b{color:var(--ink); font-weight:700;}
+
+.tabs{
+  display:flex; gap:2px; margin:18px 0 22px; border-bottom:1px solid var(--line);
+  overflow-x:auto;
+}
+.tab-btn{
+  padding:10px 16px; font-size:13.5px; font-weight:600; color:var(--ink-soft);
+  background:none; border:none; cursor:pointer; white-space:nowrap;
+  border-bottom:2px solid transparent; margin-bottom:-1px;
+}
+.tab-btn:hover{color:var(--ink);}
+.tab-btn.active{color:var(--accent-ink); border-bottom-color:var(--accent);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+.card{
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+  padding:18px 20px; box-shadow:var(--shadow);
+}
+.card + .card{margin-top:16px;}
+.card h3{font-size:15px; margin-bottom:3px;}
+.card .sub{font-size:12px; color:var(--muted); margin-bottom:14px;}
+
+.grid-4{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px;}
+.grid-3{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px;}
+.grid-2{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:14px;}
+.two-col{display:grid; grid-template-columns:1.1fr 1fr; gap:16px;}
+.two-col > *{min-width:0;}
+@media (max-width:900px){.grid-4{grid-template-columns:repeat(2,minmax(0,1fr));} .grid-3{grid-template-columns:minmax(0,1fr);} .grid-2{grid-template-columns:minmax(0,1fr);} .two-col{grid-template-columns:minmax(0,1fr);}}
+
+.stat{
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+  padding:15px 16px; position:relative; overflow:hidden; box-shadow:var(--shadow);
+}
+.stat::before{
+  content:""; position:absolute; inset:0 0 auto 0; height:3px;
+  background:var(--stat-color, var(--accent));
+}
+.stat .lbl{font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:700;}
+.stat .v{font-family:"Bricolage Grotesque",sans-serif; font-size:26px; font-weight:700; margin-top:6px; font-variant-numeric:tabular-nums;}
+.stat .v.pos{color:var(--good);}
+.stat .v.neg{color:var(--critical);}
+.stat .foot{font-size:11.5px; color:var(--ink-soft); margin-top:5px;}
+.pill{
+  display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700;
+  padding:3px 8px; border-radius:999px; margin-top:8px;
+}
+.pill.good{background:color-mix(in oklab, var(--good) 16%, transparent); color:var(--good);}
+.pill.bad{background:color-mix(in oklab, var(--critical) 16%, transparent); color:var(--critical);}
+.pill::before{content:"●"; font-size:8px;}
+
+table{border-collapse:collapse; width:100%; font-size:12.5px;}
+.table-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:9px;}
+th,td{padding:7px 10px; text-align:right; white-space:nowrap; border-bottom:1px solid var(--line-soft);}
+th:first-child,td:first-child{text-align:left; position:sticky; left:0; background:inherit;}
+thead th{
+  background:var(--surface-2); color:var(--ink-soft); font-weight:700; font-size:11px;
+  text-transform:uppercase; letter-spacing:.03em; position:sticky; top:0; z-index:2;
+}
+thead th:first-child{z-index:3;}
+tbody tr:nth-child(even){background:color-mix(in oklab, var(--surface-2) 45%, transparent);}
+tbody tr:hover{background:var(--accent-soft);}
+tbody tr.year-0 td{font-weight:700; border-bottom:2px solid var(--line);}
+tbody tr.final td{font-weight:700; border-top:2px solid var(--line);}
+td.neg{color:var(--critical);}
+td.pos-strong{color:var(--good); font-weight:700;}
+
+.legend{display:flex; flex-wrap:wrap; gap:14px; font-size:12px; color:var(--ink-soft); margin-top:10px;}
+.legend .li{display:flex; align-items:center; gap:6px;}
+.legend .sw{width:10px;height:10px;border-radius:3px; flex:none;}
+
+.info-note{
+  display:flex; gap:9px; font-size:12.5px; color:var(--ink-soft);
+  background:var(--surface-2); border:1px solid var(--line-soft); border-radius:8px;
+  padding:10px 12px; margin-top:14px;
+}
+.info-note .ic{flex:none;}
+
+/* sensitivity + tornado */
+.param-picker{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;}
+.tornado-row{display:flex; align-items:center; gap:10px; padding:7px 0; border-bottom:1px solid var(--line-soft);}
+.tornado-row:last-child{border-bottom:none;}
+.tornado-row .pname{width:150px; flex:none; font-size:12.5px; font-weight:600;}
+.tornado-row .track{flex:1; position:relative; height:22px;}
+.tornado-row .val{width:150px; flex:none; font-size:11.5px; color:var(--ink-soft); text-align:right;}
+
+.goalseek-result{
+  display:flex; align-items:center; gap:14px; padding:14px 16px;
+  background:var(--surface-2); border-radius:9px; border:1px solid var(--line-soft);
+}
+.goalseek-result .big{font-family:"Bricolage Grotesque",sans-serif; font-size:24px; font-weight:700;}
+
+.btn{
+  padding:9px 16px; border-radius:8px; border:1px solid var(--line);
+  background:var(--surface); color:var(--ink); font-weight:700; font-size:13px; cursor:pointer;
+}
+.btn.primary{background:var(--accent); border-color:var(--accent); color:#fff;}
+.btn:hover{filter:brightness(0.97);}
+.btn.primary:hover{filter:brightness(1.06);}
+
+.hint{font-size:12px; color:var(--muted);}
+.kbd-note{font-size:11.5px;color:var(--muted); margin-top:4px;}
+
+.badge{
+  display:inline-block; font-size:10.5px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.04em; padding:2px 7px; border-radius:5px;
+  background:var(--sky-soft); color:var(--sky);
+}
+.badge.crop{background:var(--crop-soft); color:var(--crop);}
+
+svg text{font-family:"Public Sans",sans-serif;}
+svg .num-lbl{font-family:"IBM Plex Mono",monospace;}
+
+footer.credits{margin-top:34px; font-size:11.5px; color:var(--muted); line-height:1.7;}
+</style>
+
+<div class="app">
+  <!-- ============================= SIDEBAR ============================= -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">🌱</div>
+      <div>
+        <h1>AgriVolt Ledger</h1>
+        <div class="brand-sub">Agrivoltaics economic assessment</div>
+      </div>
+    </div>
+    <div class="field-note">Model an agrivoltaic project's after-tax cash flows over its project life. Pick a crop and a PV system below — every figure stays editable so you can match your own site data.</div>
+
+    <!-- SYSTEM -->
+    <div class="section" data-section="system">
+      <div class="section-head"><h2>PV System</h2><span class="chev">▾</span></div>
+      <div class="section-body" id="systemPresets"></div>
+      <div id="systemFields"></div>
+    </div>
+
+    <!-- CROP -->
+    <div class="section" data-section="crop">
+      <div class="section-head"><h2>Crop</h2><span class="chev">▾</span></div>
+      <div class="section-body">
+        <div id="cropPresets"></div>
+        <div id="cropFields"></div>
+      </div>
+    </div>
+
+    <!-- SITE -->
+    <div class="section" data-section="site">
+      <div class="section-head"><h2>Site &amp; Energy</h2><span class="chev">▾</span></div>
+      <div class="section-body" id="siteFields"></div>
+    </div>
+
+    <!-- FINANCE -->
+    <div class="section" data-section="finance">
+      <div class="section-head"><h2>Financial Parameters</h2><span class="chev">▾</span></div>
+      <div class="section-body" id="financeFields"></div>
+    </div>
+
+    <!-- DEPRECIATION -->
+    <div class="section" data-section="depr">
+      <div class="section-head"><h2>Depreciation (MACRS)</h2><span class="chev">▾</span></div>
+      <div class="section-body" id="deprFields"></div>
+    </div>
+
+    <button class="reset-btn" id="resetBtn">Reset all inputs to preset defaults</button>
+    <footer class="credits">Model structure follows a 20-year, actual-dollar (nominal) after-tax cash flow analysis with MACRS depreciation, loan amortization, and an investment tax credit — consistent with an engineering-economics treatment of agrivoltaic investment decisions.</footer>
+  </aside>
+
+  <!-- ============================= MAIN ============================= -->
+  <main class="main">
+    <div class="topbar">
+      <h1 style="font-size:22px;">Economic Assessment</h1>
+      <div class="scenario" id="scenarioLabel"></div>
+    </div>
+
+    <div class="tabs" id="tabs">
+      <button class="tab-btn active" data-tab="overview">Overview</button>
+      <button class="tab-btn" data-tab="cashflow">Cash Flow Table</button>
+      <button class="tab-btn" data-tab="charts">Charts</button>
+      <button class="tab-btn" data-tab="sensitivity">Sensitivity Analysis</button>
+      <button class="tab-btn" data-tab="tornado">Tornado &amp; Break-even</button>
+    </div>
+
+    <div class="tab-panel active" id="panel-overview"></div>
+    <div class="tab-panel" id="panel-cashflow"></div>
+    <div class="tab-panel" id="panel-charts"></div>
+    <div class="tab-panel" id="panel-sensitivity"></div>
+    <div class="tab-panel" id="panel-tornado"></div>
+  </main>
+</div>
+
+<script>
+/* =====================================================================
+   ENGINE — general MACRS/loan/tax agrivoltaic cash-flow model
+   Verified against the course solution workbook: Option1/2/3 NPW & IRR
+   reproduce the workbook's live formulas to the cent at MARR = 6%.
+   ===================================================================== */
+
+const MACRS_TABLES = {
+  3:  [33.33,44.45,14.81,7.41],
+  5:  [20.00,32.00,19.20,11.52,11.52,5.76],
+  7:  [14.29,24.49,17.49,12.49,8.93,8.92,8.93,4.46],
+  10: [10.00,18.00,14.40,11.52,9.22,7.37,6.55,6.55,6.56,6.55,3.28],
+  15: [5.00,9.50,8.55,7.70,6.93,6.23,5.90,5.90,5.91,5.90,5.91,5.90,5.91,5.90,5.91,2.95],
+  20: [3.750,7.219,6.677,6.177,5.713,5.285,4.888,4.522,4.462,4.461,4.462,4.461,4.462,4.461,4.462,4.461,4.462,4.461,4.462,4.461,2.231],
+};
+const MACRS_CLASSES = [3,5,7,10,15,20];
+
+function pmtAmt(rate, nper, pv){ return (rate*pv)/(1-Math.pow(1+rate,-nper))*-1; }
+function ipmtAmt(rate, per, nper, pv){
+  const A = pmtAmt(rate, nper, pv);
+  let bal = -pv;
+  for(let k=1;k<per;k++){ const interest = bal*rate; bal -= (A-interest); }
+  return bal*rate;
+}
+function ppmtAmt(rate, per, nper, pv){ return pmtAmt(rate,nper,pv) - ipmtAmt(rate,per,nper,pv); }
+
+function macrsSchedule(basis, table, years){
+  const dep = new Array(years+1).fill(0);
+  let book = basis;
+  for(let t=1;t<=years;t++){
+    if(t-1 < table.length){ dep[t] = basis*table[t-1]/100; book -= dep[t]; }
+  }
+  return {dep, bookEnd: Math.max(book,0)};
+}
+function npvExcel(rate, values){ // values for year 1..n
+  let s=0; for(let i=0;i<values.length;i++) s += values[i]/Math.pow(1+rate,i+1);
+  return s;
+}
+function irrSolve(cf){
+  // Newton's method with bisection fallback
+  function npvAt(r){ let s=0; for(let t=0;t<cf.length;t++) s += cf[t]/Math.pow(1+r,t); return s; }
+  let r = 0.1;
+  for(let i=0;i<100;i++){
+    let f=0, df=0;
+    for(let t=0;t<cf.length;t++){ f += cf[t]/Math.pow(1+r,t); df += -t*cf[t]/Math.pow(1+r,t+1); }
+    if(Math.abs(df) < 1e-12) break;
+    const step = f/df; r -= step;
+    if(!isFinite(r)) break;
+    if(Math.abs(step) < 1e-9) return r;
+  }
+  // bisection fallback over a wide bracket
+  let lo=-0.9, hi=5, flo=npvAt(lo), fhi=npvAt(hi);
+  if(isFinite(flo) && isFinite(fhi) && flo*fhi < 0){
+    for(let i=0;i<200;i++){
+      const mid=(lo+hi)/2, fm=npvAt(mid);
+      if(Math.abs(fm) < 1e-6) return mid;
+      if(flo*fm < 0){ hi=mid; fhi=fm; } else { lo=mid; flo=fm; }
+    }
+    return (lo+hi)/2;
+  }
+  return NaN;
+}
+
+/**
+ * Run the full model. `inp` fields:
+ * system:'none'|'vertical'|'fixedTilt'|'custom', fieldArea, years, realMARR, inflation,
+ * fedTax, stateTax, cropYield, cropPrice, cropOpex, cropIrrig, cropCapital, cropSalvageConst,
+ * potentialPower, powerReduction, costPerW, omPerKW, salvagePct, yieldImpact, irrigImpact,
+ * energyPrice, sunHours, rebatePct, useLoan, loanAmount, loanAPR, loanTerm,
+ * cropMACRS, pvMACRS
+ */
+function runModel(inp){
+  const years = inp.years;
+  const hasPV = inp.system !== 'none';
+  const combinedTax = inp.fedTax*(1-inp.stateTax) + inp.stateTax;
+  const nominalRate = inp.realMARR + inp.inflation + inp.realMARR*inp.inflation;
+
+  const actualPower   = hasPV ? inp.potentialPower*(1-inp.powerReduction) : 0;
+  const pvFixedPerAcre= hasPV ? actualPower*inp.costPerW*1000 : 0;
+  const pvOMPerAcre   = hasPV ? inp.omPerKW*actualPower : 0;
+  const pvIncomePerAcre = hasPV ? actualPower*inp.sunHours*365*inp.energyPrice : 0;
+  const pvSalvagePerAcre = hasPV ? inp.salvagePct*pvFixedPerAcre : 0;
+
+  const yieldAdj = inp.cropYield*(1+(hasPV?inp.yieldImpact:0));
+  const irrigAdj = inp.cropIrrig*(1+(hasPV?inp.irrigImpact:0));
+  const cropIncomePerAcre = yieldAdj*inp.cropPrice;
+  const cropOpexTotalPerAcre = irrigAdj + inp.cropOpex;
+
+  const revenueBase = (cropIncomePerAcre + pvIncomePerAcre)*inp.fieldArea;
+  const opexBase = (cropOpexTotalPerAcre + pvOMPerAcre)*inp.fieldArea;
+  const cropCapitalTotal = inp.cropCapital*inp.fieldArea;
+  const pvCapitalTotal = pvFixedPerAcre*inp.fieldArea;
+  const cropSalvageTotal = inp.cropSalvageConst*inp.fieldArea;
+  const pvSalvageTotal = pvSalvagePerAcre*inp.fieldArea;
+
+  const useLoan = hasPV && inp.useLoan;
+  const loan = useLoan ? inp.loanAmount : 0;
+  const CE0 = cropCapitalTotal + pvCapitalTotal - loan;
+
+  const cropBasis = cropCapitalTotal;
+  const pvBasis = hasPV ? pvCapitalTotal*(1-inp.rebatePct) : 0;
+  const cropDep = macrsSchedule(cropBasis, MACRS_TABLES[inp.cropMACRS], years);
+  const pvDep = hasPV ? macrsSchedule(pvBasis, MACRS_TABLES[inp.pvMACRS], years) : {dep:new Array(years+1).fill(0), bookEnd:0};
+
+  const CE = new Array(years+1).fill(0);
+  const OE = new Array(years+1).fill(0);
+  const Rev = new Array(years+1).fill(0);
+  const Dep = new Array(years+1).fill(0);
+  const CapGain = new Array(years+1).fill(0);
+  const Salv = new Array(years+1).fill(0);
+  const Interest = new Array(years+1).fill(0);
+  const Principal = new Array(years+1).fill(0);
+
+  CE[0] = CE0;
+
+  for(let t=1;t<=years;t++){
+    Rev[t] = revenueBase*Math.pow(1+inp.inflation, t);
+    let opexEsc = opexBase*Math.pow(1+inp.inflation, t);
+    if(useLoan && loan > 0 && t <= inp.loanTerm){
+      const interest = ipmtAmt(inp.loanAPR, t, inp.loanTerm, -loan);
+      const principal = ppmtAmt(inp.loanAPR, t, inp.loanTerm, -loan);
+      opexEsc += interest;
+      CE[t] = principal;
+      Interest[t]=interest; Principal[t]=principal;
+    }
+    OE[t] = opexEsc;
+    Dep[t] = cropDep.dep[t] + pvDep.dep[t];
+  }
+
+  const cropSalvageNominal = cropSalvageTotal*Math.pow(1+inp.inflation, years);
+  const pvSalvageNominal = hasPV ? pvSalvageTotal*Math.pow(1+inp.inflation, years) : 0;
+  const cropCapGain = cropSalvageNominal - cropDep.bookEnd;
+  const pvCapGain = hasPV ? (pvSalvageNominal - pvDep.bookEnd) : 0;
+  CapGain[years] = cropCapGain + pvCapGain;
+  Salv[years] = cropSalvageNominal + pvSalvageNominal;
+
+  const BTCF = new Array(years+1).fill(0);
+  const TI = new Array(years+1).fill(0);
+  const Tax = new Array(years+1).fill(0);
+  const ATCF = new Array(years+1).fill(0);
+
+  BTCF[0] = Rev[0]-CE[0]-OE[0]+Salv[0];
+  ATCF[0] = BTCF[0];
+
+  const rebateCredit = hasPV ? inp.rebatePct*pvCapitalTotal : 0;
+
+  for(let t=1;t<=years;t++){
+    BTCF[t] = Rev[t]-CE[t]-OE[t]+Salv[t];
+    TI[t] = Rev[t]-OE[t]-Dep[t]+CapGain[t];
+    Tax[t] = TI[t]*combinedTax;
+    if(hasPV && t===1) Tax[t] -= rebateCredit;
+    ATCF[t] = BTCF[t]-Tax[t];
+  }
+
+  const npw = ATCF[0] + npvExcel(nominalRate, ATCF.slice(1));
+  const irr = irrSolve(ATCF);
+
+  // simple + discounted payback (first year cumulative >= 0)
+  let cum=0, simplePayback=null;
+  for(let t=0;t<=years;t++){ cum+=ATCF[t]; if(simplePayback===null && cum>=0 && t>0) simplePayback=t; }
+  let dcum=0, discPayback=null;
+  const disc = ATCF.map((v,t)=> t===0? v : v/Math.pow(1+nominalRate,t));
+  for(let t=0;t<=years;t++){ dcum+=disc[t]; if(discPayback===null && dcum>=0 && t>0) discPayback=t; }
+
+  return {
+    years, npw, irr, nominalRate, combinedTax,
+    CE, OE, Rev, Dep, CapGain, Salv, BTCF, TI, Tax, ATCF, Interest, Principal,
+    disc, cumDisc: disc.reduce((acc,v,i)=>{acc.push((acc[i-1]||0)+v); return acc;},[]),
+    totalInvestment: cropCapitalTotal + pvCapitalTotal, loanAmount: loan,
+    simplePayback, discPayback,
+    pvCapitalTotal, cropCapitalTotal, actualPower, pvIncomePerAcre, cropIncomePerAcre
+  };
+}
+
+/* =====================================================================
+   PRESETS
+   ===================================================================== */
+const CROP_PRESETS = {
+  tomato: {
+    name:"Processing Tomato", note:"Sacramento Valley cost study — the project baseline.",
+    source:"good",
+    cropYield:42, cropPrice:138, cropOpex:4163, cropIrrig:632, cropCapital:5522, cropSalvageConst:1037,
+    unit:"tons/acre"
+  },
+  grapes: {
+    name:"Wine Grapes", note:"Illustrative default — edit to match your varietal &amp; region.",
+    source:"warn",
+    cropYield:6, cropPrice:950, cropOpex:3200, cropIrrig:420, cropCapital:9500, cropSalvageConst:1800,
+    unit:"tons/acre"
+  },
+  lettuce: {
+    name:"Romaine Lettuce", note:"Illustrative default — edit to match your data.",
+    source:"warn",
+    cropYield:32, cropPrice:480, cropOpex:6100, cropIrrig:520, cropCapital:3600, cropSalvageConst:700,
+    unit:"tons/acre"
+  },
+  alfalfa: {
+    name:"Alfalfa Hay", note:"Illustrative default — edit to match your data.",
+    source:"warn",
+    cropYield:8, cropPrice:230, cropOpex:900, cropIrrig:460, cropCapital:1800, cropSalvageConst:400,
+    unit:"tons/acre"
+  },
+  custom: {
+    name:"Custom Crop", note:"Enter your own crop economics.",
+    source:"warn",
+    cropYield:20, cropPrice:300, cropOpex:3000, cropIrrig:500, cropCapital:4000, cropSalvageConst:800,
+    unit:"tons/acre"
+  }
+};
+
+const SYSTEM_PRESETS = {
+  none: {
+    name:"No PV — Crop Only", note:"“Do nothing” baseline: cultivate without any PV hardware.",
+    hasPV:false
+  },
+  vertical: {
+    name:"Vertical Bifacial PV", note:"Panels stood on edge between crop rows.",
+    hasPV:true,
+    potentialPower:400, powerReduction:0.40, costPerW:1.8, omPerKW:19, salvagePct:0.05,
+    yieldImpact:-0.15, irrigImpact:-0.05
+  },
+  fixedTilt: {
+    name:"Fixed-Tilt Elevated PV", note:"Panels elevated over the crop canopy at a fixed tilt.",
+    hasPV:true,
+    potentialPower:550, powerReduction:0.75, costPerW:2.0, omPerKW:22, salvagePct:0.15,
+    yieldImpact:-0.20, irrigImpact:-0.25
+  },
+  tracking: {
+    name:"Elevated Single-Axis Tracking PV", note:"Extension: tracking array trades higher cost for more energy &amp; less fixed shading.",
+    hasPV:true,
+    potentialPower:480, powerReduction:0.55, costPerW:2.35, omPerKW:24, salvagePct:0.12,
+    yieldImpact:-0.12, irrigImpact:-0.10
+  },
+  custom: {
+    name:"Custom PV System", note:"Enter your own system specification.",
+    hasPV:true,
+    potentialPower:450, powerReduction:0.50, costPerW:1.9, omPerKW:20, salvagePct:0.10,
+    yieldImpact:-0.15, irrigImpact:-0.10
+  }
+};
+
+/* =====================================================================
+   STATE
+   ===================================================================== */
+const state = {
+  cropKey:'tomato', systemKey:'vertical',
+  fieldArea:10, years:20,
+  realMARR:0.06, inflation:0.0284, fedTax:0.21, stateTax:0.088,
+  energyPrice:0.07, sunHours:5.1,
+  rebatePct:0.40, useLoan:true, loanAmount:1500000, loanAPR:0.08, loanTerm:20,
+  cropMACRS:5, pvMACRS:5,
+};
+// crop + system field values (copies of preset, independently editable)
+let crop = {...CROP_PRESETS[state.cropKey]};
+let sys = {...SYSTEM_PRESETS[state.systemKey]};
+
+function applyCropPreset(key){
+  state.cropKey = key;
+  crop = {...CROP_PRESETS[key]};
+}
+function applySystemPreset(key){
+  state.systemKey = key;
+  sys = {...SYSTEM_PRESETS[key]};
+  if(!sys.hasPV){ state.useLoan = false; } else { state.useLoan = true; }
+}
+
+function currentInputs(){
+  return {
+    system: sys.hasPV ? state.systemKey : 'none',
+    fieldArea: state.fieldArea, years: state.years,
+    realMARR: state.realMARR, inflation: state.inflation,
+    fedTax: state.fedTax, stateTax: state.stateTax,
+    cropYield: crop.cropYield, cropPrice: crop.cropPrice, cropOpex: crop.cropOpex,
+    cropIrrig: crop.cropIrrig, cropCapital: crop.cropCapital, cropSalvageConst: crop.cropSalvageConst,
+    potentialPower: sys.potentialPower||0, powerReduction: sys.powerReduction||0,
+    costPerW: sys.costPerW||0, omPerKW: sys.omPerKW||0, salvagePct: sys.salvagePct||0,
+    yieldImpact: sys.yieldImpact||0, irrigImpact: sys.irrigImpact||0,
+    energyPrice: state.energyPrice, sunHours: state.sunHours,
+    rebatePct: sys.hasPV ? state.rebatePct : 0,
+    useLoan: state.useLoan, loanAmount: state.loanAmount, loanAPR: state.loanAPR, loanTerm: state.loanTerm,
+    cropMACRS: state.cropMACRS, pvMACRS: state.pvMACRS,
+  };
+}
+
+/* =====================================================================
+   FORMATTING
+   ===================================================================== */
+function fmt$(v, {compact=false, cents=false}={}){
+  const neg = v < 0; const a = Math.abs(v);
+  let s;
+  if(compact){
+    if(a>=1e6) s = (a/1e6).toFixed(a>=10e6?1:2)+'M';
+    else if(a>=1e3) s = (a/1e3).toFixed(a>=10e3?0:1)+'k';
+    else s = a.toFixed(0);
+  } else {
+    s = a.toLocaleString('en-US', {minimumFractionDigits:cents?2:0, maximumFractionDigits:cents?2:0});
+  }
+  return (neg?'-$':'$')+s;
+}
+function fmtPct(v, d=1){ return (v*100).toFixed(d)+'%'; }
+function fmtNum(v, d=0){ return v.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}); }
+
+/* =====================================================================
+   SVG CHART TOOLKIT
+   ===================================================================== */
+const NS = "http://www.w3.org/2000/svg";
+function el(tag, attrs={}, children=[]){
+  const n = document.createElementNS(NS, tag);
+  for(const k in attrs) n.setAttribute(k, attrs[k]);
+  for(const c of children) n.appendChild(c);
+  return n;
+}
+function textEl(x,y,str,attrs={}){
+  const t = el('text', {x, y, ...attrs});
+  t.textContent = str;
+  return t;
+}
+function niceStep(range, targetTicks=5){
+  const raw = range/targetTicks;
+  const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const norm = raw/mag;
+  let step;
+  if(norm < 1.5) step = 1; else if(norm < 3) step = 2; else if(norm < 7) step = 5; else step = 10;
+  return step*mag;
+}
+
+let tooltipEl = null;
+function ensureTooltip(){
+  if(tooltipEl) return tooltipEl;
+  tooltipEl = document.createElement('div');
+  tooltipEl.style.cssText = `position:fixed; pointer-events:none; z-index:999; background:var(--ink); color:var(--paper);
+    font-size:12px; padding:7px 10px; border-radius:7px; box-shadow:var(--shadow); opacity:0; transition:opacity .08s ease;
+    font-family:"Public Sans",sans-serif; max-width:220px; line-height:1.45;`;
+  document.body.appendChild(tooltipEl);
+  return tooltipEl;
+}
+function showTip(evt, html){
+  const tip = ensureTooltip();
+  tip.innerHTML = html;
+  tip.style.opacity = '1';
+  const pad=14;
+  let x = evt.clientX + pad, y = evt.clientY + pad;
+  tip.style.left = x+'px'; tip.style.top = y+'px';
+}
+function hideTip(){ if(tooltipEl) tooltipEl.style.opacity='0'; }
+
+/**
+ * Grouped/diverging bar chart of yearly values (e.g. ATCF by year).
+ */
+function drawYearBarChart(container, years, values, {label='ATCF', money=true}={}){
+  container.innerHTML='';
+  const W = container.clientWidth || 760, H = 300;
+  const M = {top:18, right:18, bottom:34, left:64};
+  const iw = W-M.left-M.right, ih = H-M.top-M.bottom;
+  const svg = el('svg',{width:'100%',height:H,viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':label+' by year'});
+  const maxAbs = Math.max(...values.map(v=>Math.abs(v)), 1);
+  const step = niceStep(maxAbs*2, 4);
+  const yMax = Math.ceil(maxAbs/step)*step;
+  const y0 = M.top + ih/2;
+  const yScale = v => y0 - (v/yMax)*(ih/2);
+  // gridlines
+  for(let gv=-yMax; gv<=yMax; gv+=step){
+    const gy = yScale(gv);
+    svg.appendChild(el('line',{x1:M.left,x2:W-M.right,y1:gy,y2:gy,stroke:'var(--line-soft)','stroke-width':1}));
+    svg.appendChild(textEl(M.left-8, gy+4, fmt$(gv,{compact:true}), {'text-anchor':'end', 'font-size':10.5, fill:'var(--muted)', class:'num-lbl'}));
+  }
+  svg.appendChild(el('line',{x1:M.left,x2:W-M.right,y1:y0,y2:y0,stroke:'var(--muted)','stroke-width':1.2}));
+  const n = years.length;
+  const bw = Math.max((iw/n)*0.6, 3);
+  years.forEach((yr,i)=>{
+    const cx = M.left + (iw/n)*(i+0.5);
+    const v = values[i];
+    const y = yScale(v);
+    const barY = Math.min(y, y0), barH = Math.abs(y-y0);
+    const color = v>=0 ? 'var(--div-pos)' : 'var(--div-neg)';
+    const rect = el('rect',{x:cx-bw/2, y:barY, width:bw, height:Math.max(barH,1), rx:2, fill:color, opacity:0.92});
+    rect.addEventListener('mousemove', e=>showTip(e, `<b>Year ${yr}</b><br>${label}: ${money?fmt$(v,{cents:false}):fmtNum(v,1)}`));
+    rect.addEventListener('mouseleave', hideTip);
+    svg.appendChild(rect);
+    if(n<=21 && (i%Math.ceil(n/11)===0 || i===n-1)){
+      svg.appendChild(textEl(cx, H-M.bottom+16, yr, {'text-anchor':'middle','font-size':10.5, fill:'var(--muted)'}));
+    }
+  });
+  container.appendChild(svg);
+}
+
+/**
+ * Line chart — cumulative discounted cash flow, with zero-crossing (payback) marker.
+ */
+function drawCumulativeChart(container, years, cumValues, paybackYear){
+  container.innerHTML='';
+  const W = container.clientWidth || 760, H = 300;
+  const M = {top:18, right:18, bottom:34, left:70};
+  const iw = W-M.left-M.right, ih = H-M.top-M.bottom;
+  const svg = el('svg',{width:'100%',height:H,viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Cumulative discounted cash flow'});
+  const minV = Math.min(...cumValues,0), maxV = Math.max(...cumValues,0);
+  const range = maxV-minV || 1;
+  const step = niceStep(range,4);
+  const yMin = Math.floor(minV/step)*step, yMax = Math.ceil(maxV/step)*step;
+  const xScale = i => M.left + (iw)*(i/(years.length-1));
+  const yScale = v => M.top + ih - ((v-yMin)/(yMax-yMin))*ih;
+  for(let gv=yMin; gv<=yMax; gv+=step){
+    const gy = yScale(gv);
+    svg.appendChild(el('line',{x1:M.left,x2:W-M.right,y1:gy,y2:gy,stroke:'var(--line-soft)','stroke-width':1}));
+    svg.appendChild(textEl(M.left-8, gy+4, fmt$(gv,{compact:true}), {'text-anchor':'end','font-size':10.5, fill:'var(--muted)', class:'num-lbl'}));
+  }
+  const zeroY = yScale(0);
+  svg.appendChild(el('line',{x1:M.left,x2:W-M.right,y1:zeroY,y2:zeroY,stroke:'var(--muted)','stroke-width':1.2}));
+  // area fill under curve to zero
+  let areaPath = `M ${xScale(0)} ${zeroY} `;
+  cumValues.forEach((v,i)=> areaPath += `L ${xScale(i)} ${yScale(v)} `);
+  areaPath += `L ${xScale(cumValues.length-1)} ${zeroY} Z`;
+  svg.appendChild(el('path',{d:areaPath, fill:'var(--sky)', opacity:0.12}));
+  let linePath='';
+  cumValues.forEach((v,i)=>{ linePath += (i===0?'M ':'L ')+xScale(i)+' '+yScale(v)+' '; });
+  svg.appendChild(el('path',{d:linePath, fill:'none', stroke:'var(--sky)', 'stroke-width':2.4, 'stroke-linejoin':'round'}));
+  cumValues.forEach((v,i)=>{
+    const cx=xScale(i), cy=yScale(v);
+    const dot = el('circle',{cx,cy,r:3.4, fill:'var(--surface)', stroke:'var(--sky)', 'stroke-width':2});
+    dot.addEventListener('mousemove', e=>showTip(e, `<b>Year ${years[i]}</b><br>Cumulative PV: ${fmt$(v)}`));
+    dot.addEventListener('mouseleave', hideTip);
+    svg.appendChild(dot);
+  });
+  if(paybackYear!=null){
+    const cx = xScale(paybackYear);
+    svg.appendChild(el('line',{x1:cx,x2:cx,y1:M.top,y2:M.top+ih,stroke:'var(--accent)','stroke-width':1.4,'stroke-dasharray':'4 3'}));
+    svg.appendChild(textEl(cx, M.top+12, 'payback ≈ yr '+paybackYear, {'font-size':10.5, fill:'var(--accent-ink)', 'text-anchor': cx>W-140?'end':'start'}));
+  }
+  const tickEvery = Math.ceil(years.length/11);
+  years.forEach((yr,i)=>{ if(i%tickEvery===0||i===years.length-1) svg.appendChild(textEl(xScale(i), H-M.bottom+16, yr, {'text-anchor':'middle','font-size':10.5, fill:'var(--muted)'})); });
+  container.appendChild(svg);
+}
+
+/**
+ * Stacked composition bars: Revenue vs Operating Expense vs Tax vs ATCF, one representative
+ * year (categorical, 4 slots).
+ */
+function drawCompositionChart(container, model, sampleYear){
+  container.innerHTML='';
+  const W = container.clientWidth || 760, H = 260;
+  const M = {top:18, right:18, bottom:30, left:64};
+  const iw = W-M.left-M.right, ih = H-M.top-M.bottom;
+  const svg = el('svg',{width:'100%',height:H,viewBox:`0 0 ${W} ${H}`});
+  const series = [
+    {k:'Gross Revenue', v: model.Rev[sampleYear], c:'var(--s1)'},
+    {k:'Operating Exp.', v: -model.OE[sampleYear], c:'var(--s2)'},
+    {k:'Tax', v: -model.Tax[sampleYear], c:'var(--s4)'},
+    {k:'After-tax CF', v: model.ATCF[sampleYear], c:'var(--s3)'},
+  ];
+  const maxAbs = Math.max(...series.map(s=>Math.abs(s.v)),1);
+  const bw = iw/series.length*0.55;
+  series.forEach((s,i)=>{
+    const cx = M.left + (iw/series.length)*(i+0.5);
+    const h = (Math.abs(s.v)/maxAbs)*ih*0.82;
+    const y = M.top+ih-h;
+    const rect = el('rect',{x:cx-bw/2,y,width:bw,height:h,rx:3,fill:s.c});
+    rect.addEventListener('mousemove', e=>showTip(e, `<b>${s.k}</b><br>${fmt$(s.v)} (year ${sampleYear})`));
+    rect.addEventListener('mouseleave', hideTip);
+    svg.appendChild(rect);
+    svg.appendChild(textEl(cx, y-7, fmt$(s.v,{compact:true}), {'text-anchor':'middle','font-size':11, fill:'var(--ink-soft)', class:'num-lbl'}));
+    svg.appendChild(textEl(cx, H-M.bottom+16, s.k, {'text-anchor':'middle','font-size':10.5, fill:'var(--muted)'}));
+  });
+  svg.appendChild(el('line',{x1:M.left,x2:W-M.right,y1:M.top+ih,y2:M.top+ih,stroke:'var(--muted)','stroke-width':1}));
+  container.appendChild(svg);
+}
+
+/**
+ * Sensitivity line chart: NPW vs a swept parameter, single series.
+ */
+function drawSensitivityChart(container, xVals, yVals, {xLabel='', xFmt=v=>v, baseIdx=null}={}){
+  container.innerHTML='';
+  const W = container.clientWidth || 760, H = 300;
+  const M = {top:18, right:24, bottom:40, left:74};
+  const iw = W-M.left-M.right, ih = H-M.top-M.bottom;
+  const svg = el('svg',{width:'100%',height:H,viewBox:`0 0 ${W} ${H}`});
+  const minV = Math.min(...yVals,0), maxV = Math.max(...yVals,0);
+  const step = niceStep((maxV-minV)||1,4);
+  const yMin = Math.floor(minV/step)*step, yMax = Math.ceil(maxV/step)*step;
+  const xScale = i => M.left + iw*(i/(xVals.length-1||1));
+  const yScale = v => M.top+ih - ((v-yMin)/(yMax-yMin||1))*ih;
+  for(let gv=yMin; gv<=yMax; gv+=step){
+    const gy=yScale(gv);
+    svg.appendChild(el('line',{x1:M.left,x2:W-M.right,y1:gy,y2:gy,stroke:'var(--line-soft)','stroke-width':1}));
+    svg.appendChild(textEl(M.left-8,gy+4, fmt$(gv,{compact:true}), {'text-anchor':'end','font-size':10.5,fill:'var(--muted)',class:'num-lbl'}));
+  }
+  const zeroY = yScale(0);
+  svg.appendChild(el('line',{x1:M.left,x2:W-M.right,y1:zeroY,y2:zeroY,stroke:'var(--muted)','stroke-width':1.2}));
+  let path='';
+  xVals.forEach((x,i)=>{ path += (i===0?'M ':'L ')+xScale(i)+' '+yScale(yVals[i])+' '; });
+  svg.appendChild(el('path',{d:path, fill:'none', stroke:'var(--sky)', 'stroke-width':2.4}));
+  xVals.forEach((x,i)=>{
+    const cx=xScale(i), cy=yScale(yVals[i]);
+    const isBase = baseIdx===i;
+    const dot = el('circle',{cx,cy,r:isBase?5.5:4, fill:isBase?'var(--accent)':'var(--surface)', stroke:'var(--sky)', 'stroke-width':2});
+    dot.addEventListener('mousemove', e=>showTip(e, `<b>${xFmt(x)}</b>${isBase?' (base case)':''}<br>NPW: ${fmt$(yVals[i])}`));
+    dot.addEventListener('mouseleave', hideTip);
+    svg.appendChild(dot);
+    svg.appendChild(textEl(cx, H-M.bottom+16, xFmt(x), {'text-anchor':'middle','font-size':10.5, fill:'var(--muted)'}));
+  });
+  svg.appendChild(textEl(M.left+iw/2, H-6, xLabel, {'text-anchor':'middle','font-size':11,fill:'var(--ink-soft)', 'font-weight':600}));
+  container.appendChild(svg);
+}
+
+/**
+ * Tornado chart: horizontal bars from low->base and base->high per parameter.
+ */
+function drawTornadoChart(container, rows, baseNPW){
+  container.innerHTML='';
+  const W = container.clientWidth || 760;
+  const rowH = 34, M = {top:10, right:70, bottom:20, left:170};
+  const H = M.top+M.bottom+rows.length*rowH;
+  const iw = W-M.left-M.right;
+  const svg = el('svg',{width:'100%',height:H,viewBox:`0 0 ${W} ${H}`});
+  const maxAbs = Math.max(...rows.map(r=>Math.max(Math.abs(r.low-baseNPW),Math.abs(r.high-baseNPW))),1);
+  const xScale = v => (v/maxAbs)*(iw/2);
+  const cx = M.left+iw/2;
+  svg.appendChild(el('line',{x1:cx,x2:cx,y1:M.top,y2:H-M.bottom,stroke:'var(--muted)','stroke-width':1.2}));
+  rows.forEach((r,i)=>{
+    const cy = M.top+i*rowH+rowH/2;
+    svg.appendChild(textEl(M.left-12, cy+4, r.label, {'text-anchor':'end','font-size':12, fill:'var(--ink)', 'font-weight':600}));
+    const lowD = xScale(r.low-baseNPW), highD = xScale(r.high-baseNPW);
+    const barLowX = cx+Math.min(0,lowD), barLowW = Math.abs(lowD);
+    const barHighX = cx+Math.min(0,highD), barHighW = Math.abs(highD);
+    const rLow = el('rect',{x:barLowX,y:cy-9,width:Math.max(barLowW,1.5),height:9,fill:'var(--div-neg)',opacity:0.88,rx:2});
+    const rHigh = el('rect',{x:barHighX,y:cy,width:Math.max(barHighW,1.5),height:9,fill:'var(--div-pos)',opacity:0.88,rx:2});
+    rLow.addEventListener('mousemove', e=>showTip(e, `<b>${r.label}</b><br>Low (${r.lowLabel}): ${fmt$(r.low)}`));
+    rHigh.addEventListener('mousemove', e=>showTip(e, `<b>${r.label}</b><br>High (${r.highLabel}): ${fmt$(r.high)}`));
+    rLow.addEventListener('mouseleave', hideTip); rHigh.addEventListener('mouseleave', hideTip);
+    svg.appendChild(rLow); svg.appendChild(rHigh);
+  });
+  svg.appendChild(textEl(cx, H-4, 'base case NPW '+fmt$(baseNPW,{compact:true}), {'text-anchor':'middle','font-size':10.5, fill:'var(--ink-soft)'}));
+  container.appendChild(svg);
+}
+</script>
+
+<script>
+/* =====================================================================
+   SIDEBAR FIELD BUILDERS
+   ===================================================================== */
+function h(tag, attrs={}, html=''){
+  const n = document.createElement(tag);
+  for(const k in attrs) n.setAttribute(k, attrs[k]);
+  n.innerHTML = html;
+  return n;
+}
+function numField(container, {label, get, set, min, max, step=1, suffix='', isPct=false, digits=null}){
+  const wrap = h('div',{class:'field'});
+  const showVal = ()=> isPct ? fmtPct(get(), digits==null?1:digits) : (digits!=null? get().toFixed(digits):get());
+  const lab = h('label',{}, `<span>${label}</span><span class="val">${showVal()}</span>`);
+  wrap.appendChild(lab);
+  const uw = h('div',{class:'unit-input'});
+  const inp = document.createElement('input');
+  inp.type='number';
+  inp.step = step;
+  if(min!=null) inp.min=min; if(max!=null) inp.max=max;
+  inp.value = isPct ? +(get()*100).toFixed(6) : get();
+  uw.appendChild(inp);
+  if(suffix){ const sf=h('span',{class:'suffix'},suffix); uw.appendChild(sf); }
+  wrap.appendChild(uw);
+  inp.addEventListener('input', ()=>{
+    let v = parseFloat(inp.value); if(isNaN(v)) return;
+    if(isPct) v = v/100;
+    set(v);
+    lab.querySelector('.val').textContent = showVal();
+    scheduleRender();
+  });
+  container.appendChild(wrap);
+  return inp;
+}
+function selectField(container, {label, options, get, set, onChange}){
+  const wrap = h('div',{class:'field'});
+  wrap.appendChild(h('label',{},`<span>${label}</span>`));
+  const sel = document.createElement('select');
+  options.forEach(o=>{
+    const opt = document.createElement('option');
+    opt.value=o.value; opt.textContent=o.label;
+    if(o.value===get()) opt.selected=true;
+    sel.appendChild(opt);
+  });
+  sel.addEventListener('change', ()=>{ set(sel.value); onChange&&onChange(); scheduleRender(); });
+  wrap.appendChild(sel);
+  container.appendChild(wrap);
+  return sel;
+}
+
+function renderSystemPresets(){
+  const box = document.getElementById('systemPresets');
+  box.innerHTML='';
+  Object.entries(SYSTEM_PRESETS).forEach(([key,p])=>{
+    const card = h('div',{class:'preset-card'+(key===state.systemKey?' active':'')});
+    card.innerHTML = `<div class="pt">${p.name}</div><div class="ps">${p.note}</div>`;
+    card.addEventListener('click', ()=>{ applySystemPreset(key); renderSidebar(); scheduleRender(); });
+    box.appendChild(card);
+  });
+}
+function renderSystemFields(){
+  const box = document.getElementById('systemFields');
+  box.innerHTML='';
+  if(!sys.hasPV){
+    box.appendChild(h('div',{class:'field-note'},'Baseline scenario — no PV hardware, no loan, no rebate, no shading impact on the crop.'));
+    return;
+  }
+  numField(box,{label:'Potential power', get:()=>sys.potentialPower, set:v=>sys.potentialPower=v, suffix:'kW/acre', step:5});
+  numField(box,{label:'Power reduction (for crop access)', get:()=>sys.powerReduction, set:v=>sys.powerReduction=v, isPct:true, step:1});
+  const actual = document.createElement('div');
+  actual.className='hint';
+  box.appendChild(actual);
+  const updateActual = ()=>{ actual.textContent = `→ actual system size: ${fmtNum(sys.potentialPower*(1-sys.powerReduction),1)} kW/acre`; };
+  updateActual();
+  box.querySelectorAll('input').forEach(i=>i.addEventListener('input',updateActual));
+  numField(box,{label:'Installed cost', get:()=>sys.costPerW, set:v=>sys.costPerW=v, suffix:'$/W', step:0.05, digits:2});
+  numField(box,{label:'O&amp;M cost', get:()=>sys.omPerKW, set:v=>sys.omPerKW=v, suffix:'$/kW/yr', step:0.5, digits:1});
+  numField(box,{label:'Salvage value', get:()=>sys.salvagePct, set:v=>sys.salvagePct=v, isPct:true, step:1, suffix:'of investment'});
+  numField(box,{label:'Yield impact on crop', get:()=>sys.yieldImpact, set:v=>sys.yieldImpact=v, isPct:true, step:1});
+  numField(box,{label:'Irrigation cost impact', get:()=>sys.irrigImpact, set:v=>sys.irrigImpact=v, isPct:true, step:1});
+}
+
+function renderCropPresets(){
+  const box = document.getElementById('cropPresets');
+  box.innerHTML='';
+  Object.entries(CROP_PRESETS).forEach(([key,c])=>{
+    const card = h('div',{class:'preset-card'+(key===state.cropKey?' active':'')});
+    card.innerHTML = `<div class="pt">${c.name} <span class="badge crop" style="margin-left:4px;">${c.source==='good'?'sourced':'estimate'}</span></div><div class="ps">${c.note}</div>`;
+    card.addEventListener('click', ()=>{ applyCropPreset(key); renderSidebar(); scheduleRender(); });
+    box.appendChild(card);
+  });
+}
+function renderCropFields(){
+  const box = document.getElementById('cropFields');
+  box.innerHTML='';
+  numField(box,{label:'Yield (no-PV baseline)', get:()=>crop.cropYield, set:v=>crop.cropYield=v, suffix:'tons/acre', step:0.5, digits:1});
+  numField(box,{label:'Price', get:()=>crop.cropPrice, set:v=>crop.cropPrice=v, suffix:'$/ton', step:1});
+  numField(box,{label:'Operating cost', get:()=>crop.cropOpex, set:v=>crop.cropOpex=v, suffix:'$/acre/yr', step:10});
+  numField(box,{label:'Irrigation cost (no-PV)', get:()=>crop.cropIrrig, set:v=>crop.cropIrrig=v, suffix:'$/acre/yr', step:10});
+  numField(box,{label:'Capital (equipment) cost', get:()=>crop.cropCapital, set:v=>crop.cropCapital=v, suffix:'$/acre', step:50});
+  numField(box,{label:'Equipment salvage value', get:()=>crop.cropSalvageConst, set:v=>crop.cropSalvageConst=v, suffix:'$/acre, constant $', step:10});
+}
+
+function renderSiteFields(){
+  const box = document.getElementById('siteFields');
+  box.innerHTML='';
+  numField(box,{label:'Field area', get:()=>state.fieldArea, set:v=>state.fieldArea=v, suffix:'acres', step:1});
+  numField(box,{label:'Project life', get:()=>state.years, set:v=>state.years=Math.round(v), suffix:'years', step:1, min:5, max:30});
+  if(sys.hasPV){
+    numField(box,{label:'Peak sun hours', get:()=>state.sunHours, set:v=>state.sunHours=v, suffix:'hrs/day avg', step:0.1, digits:1});
+    numField(box,{label:'Energy sale price', get:()=>state.energyPrice, set:v=>state.energyPrice=v, suffix:'$/kWh', step:0.005, digits:3});
+  }
+}
+
+function renderFinanceFields(){
+  const box = document.getElementById('financeFields');
+  box.innerHTML='';
+  numField(box,{label:'Real MARR (inflation-free)', get:()=>state.realMARR, set:v=>state.realMARR=v, isPct:true, step:0.5});
+  numField(box,{label:'Inflation rate', get:()=>state.inflation, set:v=>state.inflation=v, isPct:true, step:0.1, digits:2});
+  numField(box,{label:'Federal tax rate', get:()=>state.fedTax, set:v=>state.fedTax=v, isPct:true, step:1});
+  numField(box,{label:'State tax rate', get:()=>state.stateTax, set:v=>state.stateTax=v, isPct:true, step:0.5, digits:1});
+  if(sys.hasPV){
+    numField(box,{label:'Investment tax credit / rebate', get:()=>state.rebatePct, set:v=>state.rebatePct=v, isPct:true, step:1, suffix:'of PV cost, yr 1'});
+    const loanToggleWrap = h('div',{class:'field'});
+    loanToggleWrap.innerHTML = `<label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+      <input type="checkbox" ${state.useLoan?'checked':''} id="loanToggle" style="width:auto;">
+      <span>Finance PV with a bank loan</span></label>`;
+    box.appendChild(loanToggleWrap);
+    loanToggleWrap.querySelector('#loanToggle').addEventListener('change', e=>{ state.useLoan=e.target.checked; renderSidebar(); scheduleRender(); });
+    if(state.useLoan){
+      numField(box,{label:'Loan amount', get:()=>state.loanAmount, set:v=>state.loanAmount=v, suffix:'$', step:10000});
+      numField(box,{label:'Loan APR (compounded annually)', get:()=>state.loanAPR, set:v=>state.loanAPR=v, isPct:true, step:0.25, digits:2});
+      numField(box,{label:'Loan term', get:()=>state.loanTerm, set:v=>state.loanTerm=Math.round(v), suffix:'years', step:1, min:1, max:30});
+    }
+  }
+}
+
+function renderDeprFields(){
+  const box = document.getElementById('deprFields');
+  box.innerHTML='';
+  selectField(box,{label:'Crop equipment — MACRS class', options: MACRS_CLASSES.map(c=>({value:String(c), label:c+'-year property'})),
+    get:()=>String(state.cropMACRS), set:v=>state.cropMACRS=+v});
+  if(sys.hasPV){
+    selectField(box,{label:'PV system — MACRS class', options: MACRS_CLASSES.map(c=>({value:String(c), label:c+'-year property'})),
+      get:()=>String(state.pvMACRS), set:v=>state.pvMACRS=+v});
+    box.appendChild(h('div',{class:'field-note'},'PV property typically qualifies as 5-year MACRS under current federal law. Other classes are offered here so you can test the sensitivity of NPW/IRR to the depreciation schedule.'));
+  }
+}
+
+function renderSidebar(){
+  renderSystemPresets();
+  renderSystemFields();
+  renderCropPresets();
+  renderCropFields();
+  renderSiteFields();
+  renderFinanceFields();
+  renderDeprFields();
+}
+
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  applyCropPreset(state.cropKey);
+  applySystemPreset(state.systemKey);
+  Object.assign(state, {
+    fieldArea:10, years:20, realMARR:0.06, inflation:0.0284, fedTax:0.21, stateTax:0.088,
+    energyPrice:0.07, sunHours:5.1, rebatePct:0.40, loanAmount:1500000, loanAPR:0.08, loanTerm:20,
+    cropMACRS:5, pvMACRS:5,
+  }, {cropKey:state.cropKey, systemKey:state.systemKey});
+  state.useLoan = sys.hasPV;
+  renderSidebar();
+  scheduleRender();
+});
+
+document.querySelectorAll('.section-head').forEach(sh=>{
+  sh.addEventListener('click', ()=> sh.parentElement.classList.toggle('collapsed'));
+});
+</script>
+
+<script>
+/* =====================================================================
+   SENSITIVITY / TORNADO PARAMETER SPECS
+   Each spec operates on a plain "inputs" object (from currentInputs()).
+   ===================================================================== */
+function paramSpecs(inputs){
+  const hasPV = inputs.system !== 'none';
+  const specs = [
+    { key:'marr', label:'Real MARR', pvOnly:false,
+      base: inputs.realMARR, min:0.04, max:0.20,
+      apply:(inp,v)=>inp.realMARR=v, fmt:v=>fmtPct(v,0) },
+    { key:'investment', label:'Total Investment', pvOnly:false,
+      base:1, min:0.7, max:1.3,
+      apply:(inp,v)=>{ inp.cropCapital*=v; inp.costPerW*=v; }, fmt:v=>(v===1?'base':(v>1?'+':'')+Math.round((v-1)*100)+'%') },
+    { key:'cropPrice', label:'Crop Price', pvOnly:false,
+      base: inputs.cropPrice, min: inputs.cropPrice*0.7, max: inputs.cropPrice*1.3,
+      apply:(inp,v)=>inp.cropPrice=v, fmt:v=>'$'+v.toFixed(0) },
+    { key:'cropSalvage', label:'Crop Salvage Value', pvOnly:false,
+      base: inputs.cropSalvageConst, min: inputs.cropSalvageConst*0.4, max: inputs.cropSalvageConst*1.6,
+      apply:(inp,v)=>inp.cropSalvageConst=v, fmt:v=>'$'+v.toFixed(0) },
+    { key:'pvSalvage', label:'PV Salvage %', pvOnly:true,
+      base: inputs.salvagePct, min:0, max:0.35,
+      apply:(inp,v)=>inp.salvagePct=v, fmt:v=>fmtPct(v,0) },
+    { key:'rebate', label:'ITC / Rebate %', pvOnly:true,
+      base: inputs.rebatePct, min:0, max:0.6,
+      apply:(inp,v)=>inp.rebatePct=v, fmt:v=>fmtPct(v,0) },
+    { key:'energyPrice', label:'Energy Sale Price', pvOnly:true,
+      base: inputs.energyPrice, min: inputs.energyPrice*0.6, max: inputs.energyPrice*1.4,
+      apply:(inp,v)=>inp.energyPrice=v, fmt:v=>'$'+v.toFixed(3) },
+    { key:'loanAPR', label:'Loan APR', pvOnly:true,
+      base: inputs.loanAPR, min:0.02, max:0.14,
+      apply:(inp,v)=>inp.loanAPR=v, fmt:v=>fmtPct(v,1) },
+    { key:'inflation', label:'Inflation Rate', pvOnly:false,
+      base: inputs.inflation, min: Math.max(inputs.inflation-0.02,0.002), max: inputs.inflation+0.02,
+      apply:(inp,v)=>inp.inflation=v, fmt:v=>fmtPct(v,1) },
+    { key:'fedTax', label:'Federal Tax Rate', pvOnly:false,
+      base: inputs.fedTax, min: Math.max(inputs.fedTax-0.06,0), max: inputs.fedTax+0.06,
+      apply:(inp,v)=>inp.fedTax=v, fmt:v=>fmtPct(v,0) },
+  ];
+  return specs.filter(s => !s.pvOnly || hasPV);
+}
+function sweepParam(spec, points=7){
+  const xs = []; for(let i=0;i<points;i++) xs.push(spec.min + (spec.max-spec.min)*i/(points-1));
+  if(!xs.some(x=>Math.abs(x-spec.base)<1e-9)) xs.push(spec.base);
+  xs.sort((a,b)=>a-b);
+  const ys = xs.map(x=>{
+    const inp = currentInputs(); spec.apply(inp,x);
+    return runModel(inp).npw;
+  });
+  const baseIdx = xs.reduce((bi,x,i)=> Math.abs(x-spec.base)<Math.abs(xs[bi]-spec.base)?i:bi, 0);
+  return {xs, ys, baseIdx};
+}
+
+function goalSeek(spec, targetNPW=0){
+  const f = v=>{ const inp=currentInputs(); spec.apply(inp,v); return runModel(inp).npw - targetNPW; };
+  let lo=spec.min, hi=spec.max, flo=f(lo), fhi=f(hi);
+  // widen bracket a bit beyond the default range to try to find a root
+  if(flo*fhi>0){
+    lo = spec.min - (spec.max-spec.min); hi = spec.max + (spec.max-spec.min)*3;
+    lo = Math.max(lo, spec.key==='rebate'||spec.key==='pvSalvage'||spec.key==='marr'||spec.key==='inflation'||spec.key==='fedTax'||spec.key==='loanAPR' ? 0 : lo);
+    flo=f(lo); fhi=f(hi);
+  }
+  if(flo*fhi>0) return null;
+  for(let i=0;i<80;i++){
+    const mid=(lo+hi)/2, fm=f(mid);
+    if(Math.abs(fm)<1) return mid;
+    if(flo*fm<0){ hi=mid; fhi=fm; } else { lo=mid; flo=fm; }
+  }
+  return (lo+hi)/2;
+}
+</script>
+
+<script>
+/* =====================================================================
+   TAB RENDERERS
+   ===================================================================== */
+let currentModel = null, currentInp = null;
+let sensState = { paramKey:'marr' };
+let overviewYear = 10;
+
+function statCard(lbl, value, {foot='', color=null, pillGood=null}={}){
+  const c = h('div',{class:'stat'});
+  if(color) c.style.setProperty('--stat-color', color);
+  c.innerHTML = `<div class="lbl">${lbl}</div><div class="v">${value}</div>${foot?`<div class="foot">${foot}</div>`:''}`;
+  if(pillGood!==null){
+    c.innerHTML += `<div class="pill ${pillGood?'good':'bad'}">${pillGood?'Economically attractive':'Below MARR'}</div>`;
+  }
+  return c;
+}
+
+function renderOverview(){
+  const m = currentModel, inp = currentInp;
+  const panel = document.getElementById('panel-overview');
+  panel.innerHTML='';
+
+  const stats = h('div',{class:'grid-4'});
+  stats.appendChild(statCard('Net Present Worth', fmt$(m.npw), {
+    foot:`discounted at nominal MARR ${fmtPct(m.nominalRate,2)}`,
+    color: m.npw>=0?'var(--good)':'var(--critical)', pillGood: m.npw>=0
+  }));
+  stats.appendChild(statCard('Internal Rate of Return', isFinite(m.irr)?fmtPct(m.irr,2):'n/a', {
+    foot: isFinite(m.irr) ? (m.irr>m.nominalRate?'exceeds nominal MARR':'below nominal MARR') : 'no real root found',
+    color: isFinite(m.irr) && m.irr>=m.nominalRate ? 'var(--good)' : 'var(--critical)'
+  }));
+  stats.appendChild(statCard('Total Investment', fmt$(m.totalInvestment), {
+    foot: m.loanAmount>0 ? `of which ${fmt$(m.loanAmount)} financed by loan` : 'fully equity-financed', color:'var(--sky)'
+  }));
+  stats.appendChild(statCard('Discounted Payback', m.discPayback? 'Year '+m.discPayback : (inp.years+'+ yrs'), {
+    foot: m.simplePayback? `simple payback: year ${m.simplePayback}` : 'not recovered within project life', color:'var(--accent)'
+  }));
+  panel.appendChild(stats);
+
+  const two = h('div',{class:'two-col', style:'margin-top:16px;'});
+
+  const summary = h('div',{class:'card'});
+  const cropP = CROP_PRESETS[state.cropKey], sysP = SYSTEM_PRESETS[state.systemKey];
+  summary.innerHTML = `<h3>Scenario</h3><div class="sub">${sysP.name} &middot; ${cropP.name} &middot; ${inp.fieldArea} acres &middot; ${inp.years}-yr life</div>`;
+  const rows = [
+    ['Crop yield (adjusted)', fmtNum(inp.cropYield*(1+(inp.system!=='none'?inp.yieldImpact:0)),1)+' tons/acre'],
+    ['Crop revenue', fmt$(m.cropIncomePerAcre*inp.fieldArea)+' /yr (year 1 real $)'],
+  ];
+  if(inp.system!=='none'){
+    rows.push(['PV system size', fmtNum(m.actualPower*inp.fieldArea,0)+' kW total ('+fmtNum(m.actualPower,0)+' kW/acre)']);
+    rows.push(['Energy revenue', fmt$(m.pvIncomePerAcre*inp.fieldArea)+' /yr (year 1 real $)']);
+    rows.push(['PV investment', fmt$(m.pvCapitalTotal)]);
+    rows.push(['Rebate credit (yr 1)', fmt$(inp.rebatePct*m.pvCapitalTotal)]);
+  }
+  rows.push(['Crop equipment investment', fmt$(m.cropCapitalTotal)]);
+  rows.push(['Combined tax rate', fmtPct(m.combinedTax,2)]);
+  rows.push(['Nominal (market) discount rate', fmtPct(m.nominalRate,2)+' — Fisher-combined from real MARR &amp; inflation']);
+  const dl = h('div',{});
+  dl.innerHTML = rows.map(([k,v])=>`<div style="display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line-soft);font-size:13px;"><span style="color:var(--ink-soft);">${k}</span><span class="mono" style="font-weight:600;">${v}</span></div>`).join('');
+  summary.appendChild(dl);
+  two.appendChild(summary);
+
+  const compCard = h('div',{class:'card'});
+  compCard.innerHTML = `<h3>Cash flow composition</h3><div class="sub">Revenue, cost, and tax for a single representative year</div>`;
+  const sliderWrap = h('div',{style:'margin-bottom:10px;'});
+  sliderWrap.innerHTML = `<input type="range" min="1" max="${inp.years}" value="${overviewYear}" id="ovYearSlider"><div class="hint" style="text-align:center;">Year <b id="ovYearLbl">${overviewYear}</b> of ${inp.years}</div>`;
+  compCard.appendChild(sliderWrap);
+  const compChart = h('div',{});
+  compCard.appendChild(compChart);
+  const legend = h('div',{class:'legend'});
+  legend.innerHTML = `<div class="li"><span class="sw" style="background:var(--s1)"></span>Gross revenue</div>
+    <div class="li"><span class="sw" style="background:var(--s2)"></span>Operating expense</div>
+    <div class="li"><span class="sw" style="background:var(--s4)"></span>Tax</div>
+    <div class="li"><span class="sw" style="background:var(--s3)"></span>After-tax cash flow</div>`;
+  compCard.appendChild(legend);
+  two.appendChild(compCard);
+  panel.appendChild(two);
+
+  drawCompositionChart(compChart, m, overviewYear);
+  sliderWrap.querySelector('#ovYearSlider').addEventListener('input', e=>{
+    overviewYear = +e.target.value;
+    sliderWrap.querySelector('#ovYearLbl').textContent = overviewYear;
+    drawCompositionChart(compChart, m, overviewYear);
+  });
+
+  if(inp.system!=='none' && inp.rebatePct>0){
+    const note = h('div',{class:'card'});
+    const withoutRebate = runModel({...inp, rebatePct:0});
+    note.innerHTML = `<div class="info-note"><span class="ic">💡</span><div><b>Effect of the investment tax credit:</b> removing the ${fmtPct(inp.rebatePct,0)} rebate drops NPW from ${fmt$(m.npw)} to ${fmt$(withoutRebate.npw)}
+      ${withoutRebate.npw<0 ? ' — the project would no longer be economically attractive without it.' : ' — the project would remain attractive even without it.'}
+      Use the <b>Tornado &amp; Break-even</b> tab to find the minimum rebate needed for NPW ≥ 0.</div></div>`;
+    panel.appendChild(note);
+  }
+}
+
+function renderCashflow(){
+  const m = currentModel, inp = currentInp;
+  const panel = document.getElementById('panel-cashflow');
+  panel.innerHTML='';
+  const card = h('div',{class:'card'});
+  card.innerHTML = `<h3>Year-by-year after-tax cash flow</h3><div class="sub">All figures in actual (nominal, inflated) dollars for the whole ${inp.fieldArea}-acre field — matches the standard engineering-economics tableau: n, CE, gross income, OE, depreciation, capital gain, salvage, BTCF, taxable income, tax, ATCF.</div>`;
+  const tw = h('div',{class:'table-wrap'});
+  let thead = `<thead><tr><th>n</th><th>Capital Exp.</th><th>Gross Revenue</th><th>Operating Exp.</th><th>Depreciation</th><th>Capital Gain</th><th>Salvage</th><th>BTCF</th><th>Taxable Income</th><th>Tax</th><th>ATCF</th></tr></thead>`;
+  let rowsHtml='';
+  for(let t=0;t<=m.years;t++){
+    const cls = t===0?'year-0':(t===m.years?'final':'');
+    rowsHtml += `<tr class="${cls}">
+      <td>${t}</td>
+      <td class="mono">${m.CE[t]?fmt$(m.CE[t]):'—'}</td>
+      <td class="mono">${m.Rev[t]?fmt$(m.Rev[t]):'—'}</td>
+      <td class="mono">${m.OE[t]?fmt$(m.OE[t]):'—'}</td>
+      <td class="mono">${m.Dep[t]?fmt$(m.Dep[t]):'—'}</td>
+      <td class="mono">${m.CapGain[t]?fmt$(m.CapGain[t]):'—'}</td>
+      <td class="mono">${m.Salv[t]?fmt$(m.Salv[t]):'—'}</td>
+      <td class="mono ${m.BTCF[t]<0?'neg':''}">${fmt$(m.BTCF[t])}</td>
+      <td class="mono ${m.TI[t]<0?'neg':''}">${t===0?'—':fmt$(m.TI[t])}</td>
+      <td class="mono ${m.Tax[t]<0?'neg':''}">${t===0?'—':fmt$(m.Tax[t])}</td>
+      <td class="mono ${m.ATCF[t]<0?'neg':'pos-strong'}">${fmt$(m.ATCF[t])}</td>
+    </tr>`;
+  }
+  tw.innerHTML = `<table>${thead}<tbody>${rowsHtml}</tbody></table>`;
+  card.appendChild(tw);
+  panel.appendChild(card);
+
+  const foot = h('div',{class:'grid-3', style:'margin-top:16px;'});
+  foot.appendChild(statCard('NPW', fmt$(m.npw), {color:m.npw>=0?'var(--good)':'var(--critical)'}));
+  foot.appendChild(statCard('IRR', isFinite(m.irr)?fmtPct(m.irr,2):'n/a', {color:'var(--sky)'}));
+  foot.appendChild(statCard('Sum of ATCF (undiscounted)', fmt$(m.ATCF.reduce((a,b)=>a+b,0)), {color:'var(--accent)'}));
+  panel.appendChild(foot);
+}
+
+function renderCharts(){
+  const m = currentModel, inp = currentInp;
+  const panel = document.getElementById('panel-charts');
+  panel.innerHTML='';
+  const years = Array.from({length:m.years+1},(_,i)=>i);
+
+  const c1 = h('div',{class:'card'});
+  c1.innerHTML = `<h3>After-tax cash flow by year</h3><div class="sub">Nominal dollars. Blue = inflow, red = outflow.</div>`;
+  const box1 = h('div',{}); c1.appendChild(box1);
+  panel.appendChild(c1);
+  drawYearBarChart(box1, years, m.ATCF, {label:'ATCF'});
+
+  const c2 = h('div',{class:'card'});
+  c2.innerHTML = `<h3>Cumulative discounted cash flow</h3><div class="sub">Present value of ATCF accumulated through year n, discounted at the nominal MARR (${fmtPct(m.nominalRate,2)}). Crosses zero at the discounted payback year.</div>`;
+  const box2 = h('div',{}); c2.appendChild(box2);
+  panel.appendChild(c2);
+  drawCumulativeChart(box2, years, m.cumDisc, m.discPayback);
+
+  window.addEventListener('resize', ()=>{ /* redraw on resize handled by rerender */ });
+}
+
+function paramChips(container, specs, activeKey, onPick){
+  container.innerHTML='';
+  specs.forEach(s=>{
+    const chip = h('button',{class:'chip'+(s.key===activeKey?' active':'')}, s.label);
+    chip.addEventListener('click', ()=> onPick(s.key));
+    container.appendChild(chip);
+  });
+}
+
+function renderSensitivity(){
+  const inp = currentInp;
+  const panel = document.getElementById('panel-sensitivity');
+  panel.innerHTML='';
+  const specs = paramSpecs(inp);
+  if(!specs.find(s=>s.key===sensState.paramKey)) sensState.paramKey = specs[0].key;
+
+  const card = h('div',{class:'card'});
+  card.innerHTML = `<h3>Single-parameter sensitivity</h3><div class="sub">Sweep one input across a range (base case holds everything else fixed) and watch Net Present Worth respond. Pick a parameter below.</div>`;
+  const chips = h('div',{class:'param-picker'});
+  card.appendChild(chips);
+  const rangeRow = h('div',{class:'field-2col', style:'max-width:420px;'});
+  card.appendChild(rangeRow);
+  const chartBox = h('div',{style:'margin-top:8px;'});
+  card.appendChild(chartBox);
+  const tableBox = h('div',{style:'margin-top:14px;'});
+  card.appendChild(tableBox);
+  panel.appendChild(card);
+
+  function draw(){
+    const spec = specs.find(s=>s.key===sensState.paramKey);
+    paramChips(chips, specs, spec.key, k=>{ sensState.paramKey=k; draw(); });
+
+    rangeRow.innerHTML='';
+    const minInp = numFieldStandalone(rangeRow, 'Min', spec.min, v=>{spec.min=v; draw();}, spec.key.includes('Pct')||['marr','rebate','pvSalvage','inflation','fedTax','loanAPR'].includes(spec.key));
+    const maxInp = numFieldStandalone(rangeRow, 'Max', spec.max, v=>{spec.max=v; draw();}, spec.key.includes('Pct')||['marr','rebate','pvSalvage','inflation','fedTax','loanAPR'].includes(spec.key));
+
+    const {xs, ys, baseIdx} = sweepParam(spec, 7);
+    drawSensitivityChart(chartBox, xs, ys, {xLabel:spec.label, xFmt:spec.fmt, baseIdx});
+
+    let rowsHtml = xs.map((x,i)=>{
+      const inp2 = currentInputs(); spec.apply(inp2,x);
+      const mm = runModel(inp2);
+      return `<tr class="${i===baseIdx?'final':''}"><td>${spec.fmt(x)}${i===baseIdx?' <span class="badge">base</span>':''}</td>
+        <td class="mono ${mm.npw<0?'neg':''}">${fmt$(mm.npw)}</td>
+        <td class="mono">${isFinite(mm.irr)?fmtPct(mm.irr,2):'n/a'}</td></tr>`;
+    }).join('');
+    tableBox.innerHTML = `<div class="table-wrap"><table><thead><tr><th>${spec.label}</th><th>NPW</th><th>IRR</th></tr></thead><tbody>${rowsHtml}</tbody></table></div>`;
+  }
+  draw();
+}
+
+function numFieldStandalone(container, label, value, onChange, isPct){
+  const wrap = h('div',{class:'field'});
+  wrap.innerHTML = `<label><span>${label}</span></label>`;
+  const inp = document.createElement('input');
+  inp.type='number'; inp.step= isPct?1:'any';
+  inp.value = isPct? +(value*100).toFixed(4) : value;
+  inp.addEventListener('change', ()=>{ let v=parseFloat(inp.value); if(isNaN(v))return; if(isPct)v/=100; onChange(v); });
+  wrap.appendChild(inp);
+  container.appendChild(wrap);
+  return inp;
+}
+
+function renderTornado(){
+  const inp = currentInp;
+  const panel = document.getElementById('panel-tornado');
+  panel.innerHTML='';
+  const specs = paramSpecs(inp);
+
+  const tCard = h('div',{class:'card'});
+  tCard.innerHTML = `<h3>Tornado — impact ranking</h3><div class="sub">Each parameter is swept independently across its default range while everything else is held at the base case. Bars are sorted by how much they move Net Present Worth.</div>`;
+  const tBox = h('div',{}); tCard.appendChild(tBox);
+  panel.appendChild(tCard);
+
+  const rows = specs.map(spec=>{
+    const inpLo = currentInputs(); spec.apply(inpLo, spec.min);
+    const inpHi = currentInputs(); spec.apply(inpHi, spec.max);
+    const lowNPW = runModel(inpLo).npw, highNPW = runModel(inpHi).npw;
+    return { label: spec.label, low: Math.min(lowNPW,highNPW), high: Math.max(lowNPW,highNPW),
+      lowLabel: spec.fmt(spec.min), highLabel: spec.fmt(spec.max) };
+  }).sort((a,b)=> Math.abs(b.high-b.low) - Math.abs(a.high-a.low));
+  drawTornadoChart(tBox, rows, currentModel.npw);
+  const leg = h('div',{class:'legend'});
+  leg.innerHTML = `<div class="li"><span class="sw" style="background:var(--div-neg)"></span>NPW at parameter minimum</div>
+    <div class="li"><span class="sw" style="background:var(--div-pos)"></span>NPW at parameter maximum</div>`;
+  tCard.appendChild(leg);
+
+  const gCard = h('div',{class:'card'});
+  gCard.innerHTML = `<h3>Break-even finder</h3><div class="sub">Solve for the value of one parameter that brings Net Present Worth to exactly zero — a generalized version of Excel's Goal Seek, useful for questions like "what's the minimum rebate needed for this system to pencil out?"</div>`;
+  const pick = h('div',{class:'param-picker'});
+  gCard.appendChild(pick);
+  const resultBox = h('div',{style:'margin-top:6px;'});
+  gCard.appendChild(resultBox);
+  panel.appendChild(gCard);
+
+  const goalState = renderTornado.goalState || (renderTornado.goalState = {});
+  if(!goalState.key || !specs.find(s=>s.key===goalState.key)) goalState.key = (specs.find(s=>s.key==='rebate')||specs[0]).key;
+  function drawGoal(){
+    paramChips(pick, specs, goalState.key, k=>{ goalState.key=k; drawGoal(); });
+    const spec = specs.find(s=>s.key===goalState.key);
+    const sol = goalSeek(spec, 0);
+    if(sol==null){
+      resultBox.innerHTML = `<div class="goalseek-result"><div>⚠️</div><div>No break-even value of <b>${spec.label}</b> found within a widened search range — NPW ${currentModel.npw>=0?'stays positive':'stays negative'} across all plausible values tried.</div></div>`;
+    } else {
+      resultBox.innerHTML = `<div class="goalseek-result">
+        <div class="big">${spec.fmt(sol)}</div>
+        <div>is the break-even <b>${spec.label}</b> — the value at which NPW = $0, holding every other input at its current value. Current base case: ${spec.fmt(spec.base)}.</div>
+      </div>`;
+    }
+  }
+  drawGoal();
+}
+</script>
+
+<script>
+/* =====================================================================
+   MASTER RENDER LOOP + TAB SWITCHING + INIT
+   ===================================================================== */
+let activeTab = 'overview';
+const RENDERERS = {
+  overview: renderOverview, cashflow: renderCashflow, charts: renderCharts,
+  sensitivity: renderSensitivity, tornado: renderTornado,
+};
+
+function updateScenarioLabel(){
+  const cropP = CROP_PRESETS[state.cropKey], sysP = SYSTEM_PRESETS[state.systemKey];
+  document.getElementById('scenarioLabel').innerHTML =
+    `<b>${sysP.name}</b> &middot; <b>${cropP.name}</b> &middot; ${state.fieldArea} acres &middot; ${state.years}-yr project life`;
+}
+
+function scheduleRender(){
+  currentInp = currentInputs();
+  currentModel = runModel(currentInp);
+  updateScenarioLabel();
+  RENDERERS[activeTab]();
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    activeTab = btn.dataset.tab;
+    document.getElementById('panel-'+activeTab).classList.add('active');
+    RENDERERS[activeTab]();
+  });
+});
+
+// initial paint
+renderSidebar();
+scheduleRender();
+</script>
+
+
+
+
