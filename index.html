@@ -222,12 +222,79 @@ input[type=range]{
 .preset-card .pt{font-weight:700; font-size:13.5px;}
 .preset-card .ps{font-size:11.5px; color:var(--muted); margin-top:2px;}
 
+.crop-info{
+  border:1px solid var(--line-soft); background:var(--surface-2); border-radius:9px;
+  padding:10px 12px; margin:-2px 0 14px; font-size:12px;
+}
+.crop-info .ci-top{margin-bottom:5px;}
+.crop-info .ci-note{color:var(--ink-soft); margin-bottom:6px;}
+.crop-info .ci-link{
+  display:inline-block; font-size:11.5px; color:var(--accent-ink); text-decoration:none;
+  border-bottom:1px dotted var(--accent-ink); margin-bottom:6px; word-break:break-word;
+}
+.crop-info .ci-link:hover{opacity:0.75;}
+.crop-info .ci-caveat{
+  font-size:11px; color:var(--muted); line-height:1.5; padding-top:6px; border-top:1px dashed var(--line);
+}
+
+.item-divider{
+  font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.03em;
+  color:var(--muted); margin:16px 0 8px; padding-top:12px; border-top:1px dashed var(--line);
+}
+.item-editor{
+  border:1px solid var(--line-soft); background:var(--surface-2); border-radius:9px;
+  padding:10px; margin-bottom:10px;
+}
+.item-editor-title{font-size:12px; font-weight:700; color:var(--ink-soft); margin-bottom:7px;}
+.item-list{display:flex; flex-direction:column; gap:5px; margin-bottom:6px;}
+.item-row{
+  display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1.15fr) 78px 22px;
+  gap:5px; align-items:center;
+}
+.item-row select.item-cat, .item-row input.item-name, .item-row input.item-amt{
+  width:100%; min-width:0; padding:5px 6px; font-size:11.5px;
+  border:1px solid var(--line); border-radius:6px; background:var(--surface); color:var(--ink);
+}
+.item-row input.item-amt{font-family:"IBM Plex Mono",monospace; text-align:right;}
+.item-row select.item-cat{color:var(--ink-soft); font-size:11px;}
+.item-del{
+  border:none; background:transparent; color:var(--muted); font-size:16px; line-height:1;
+  cursor:pointer; padding:2px; border-radius:5px; justify-self:center;
+}
+.item-del:hover{color:var(--status-bad, #c0392b); background:var(--surface);}
+.item-add-row{margin-top:2px;}
+.item-add-row select.item-cat, .item-add-row input.item-name, .item-add-row input.item-amt{
+  border-style:dashed;
+}
+.item-add-btn{
+  border:1px solid var(--accent); background:var(--accent); color:#fff; border-radius:6px;
+  font-size:11px; font-weight:700; cursor:pointer; padding:5px 4px;
+}
+.item-add-btn:hover{opacity:.85;}
+.item-total{
+  display:flex; justify-content:space-between; align-items:baseline;
+  font-size:12px; font-weight:700; color:var(--ink); padding-top:7px;
+  border-top:1px solid var(--line-soft); margin-top:2px;
+}
+.item-total .hint{font-weight:500; font-size:10.5px;}
+
 .reset-btn{
   width:100%; margin-top:18px; padding:10px; border-radius:8px;
   border:1px dashed var(--line); background:transparent; color:var(--ink-soft);
   font-size:12.5px; font-weight:600; cursor:pointer;
 }
 .reset-btn:hover{border-color:var(--accent); color:var(--accent-ink);}
+
+.io-row{display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-top:8px;}
+.io-btn{
+  padding:8px 6px; border-radius:8px; border:1px solid var(--line); background:var(--surface);
+  color:var(--ink-soft); font-size:11.5px; font-weight:600; cursor:pointer; text-align:center;
+}
+.io-btn:hover{border-color:var(--accent); color:var(--accent-ink);}
+.io-btn-wide{width:100%; margin-top:7px;}
+.io-status{font-size:11px; color:var(--muted); margin-top:6px; min-height:14px;}
+.io-status.ok{color:var(--good, #2e7d32);}
+.io-status.err{color:var(--critical, #c0392b);}
 
 /* ============================= MAIN ============================= */
 .main{padding:26px 32px 60px; max-width:1200px;}
@@ -353,7 +420,79 @@ svg text{font-family:"Public Sans",sans-serif;}
 svg .num-lbl{font-family:"IBM Plex Mono",monospace;}
 
 footer.credits{margin-top:34px; font-size:11.5px; color:var(--muted); line-height:1.7;}
+
+/* ============================= LOCK SCREEN ============================= */
+.lockscreen{
+  display:none; position:fixed; inset:0; z-index:10000;
+  align-items:center; justify-content:center; padding:24px;
+  background:
+    radial-gradient(900px 500px at 15% 10%, color-mix(in oklab, var(--crop) 18%, transparent), transparent 60%),
+    radial-gradient(800px 500px at 90% 95%, color-mix(in oklab, var(--accent) 16%, transparent), transparent 60%),
+    var(--paper);
+}
+html.is-locked .lockscreen{display:flex;}
+html.is-locked .app{display:none;}
+html.is-locked body{overflow:hidden;}
+.lock-card{
+  width:100%; max-width:360px; text-align:center;
+  background:var(--surface); border:1px solid var(--line); border-radius:16px;
+  padding:30px 26px 24px; box-shadow:var(--shadow);
+}
+.lock-mark{
+  width:54px; height:54px; margin:0 auto 14px; border-radius:14px; font-size:26px;
+  display:flex; align-items:center; justify-content:center;
+  background:linear-gradient(135deg, var(--crop), var(--accent)); box-shadow:var(--shadow);
+}
+.lock-card h1{font-size:22px; margin-bottom:4px;}
+.lock-sub{font-size:12.5px; color:var(--muted); margin-bottom:20px;}
+.lock-dots{display:flex; justify-content:center; gap:12px; margin-bottom:14px;}
+.lock-dots span{
+  width:13px; height:13px; border-radius:50%; border:2px solid var(--line);
+  background:transparent; transition:background .1s ease, border-color .1s ease;
+}
+.lock-dots span.on{background:var(--accent); border-color:var(--accent);}
+.lock-card.shake{animation:lockshake .35s ease;}
+.lock-card.shake .lock-dots span{border-color:var(--critical); background:var(--critical);}
+@keyframes lockshake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
+.lock-input{
+  width:100%; border:1px solid var(--line); background:var(--surface); color:var(--ink); border-radius:8px; text-align:center; letter-spacing:.5em; font-size:20px; padding:10px 8px 10px 16px;
+  font-family:"IBM Plex Mono",monospace;
+}
+.lock-pad{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:14px 0 4px;}
+.lock-key{
+  padding:12px 0; border-radius:10px; border:1px solid var(--line); background:var(--surface-2);
+  color:var(--ink); font-size:17px; font-weight:600; cursor:pointer; font-family:"IBM Plex Mono",monospace;
+}
+.lock-key:hover{border-color:var(--accent);}
+.lock-key:active{background:var(--accent-soft);}
+.lock-key.fn{font-size:13px; color:var(--ink-soft); font-family:"Public Sans",sans-serif;}
+.lock-msg{min-height:18px; margin-top:10px; font-size:12.5px; color:var(--critical); font-weight:600;}
+.lock-btn{
+  padding:6px 11px; border-radius:8px; border:1px solid var(--line); background:var(--surface);
+  color:var(--ink-soft); font-size:12px; font-weight:600; cursor:pointer;
+}
+.lock-btn:hover{border-color:var(--accent); color:var(--accent-ink);}
+.topbar-right{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;}
 </style>
+
+<!-- ============================= LOCK SCREEN ============================= -->
+<script>try{ if(sessionStorage.getItem('agv_unlocked')!=='1') document.documentElement.classList.add('is-locked'); }catch(e){ document.documentElement.classList.add('is-locked'); }</script>
+<div class="lockscreen" id="lockscreen" role="dialog" aria-modal="true" aria-labelledby="lockTitle">
+  <form class="lock-card" id="lockCard" autocomplete="off">
+    <div class="lock-mark">🔒</div>
+    <h1 id="lockTitle">AgriVolt Ledger</h1>
+    <div class="lock-sub">Enter the passcode to continue</div>
+    <div class="lock-dots" id="lockDots" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    <input class="lock-input" id="lockInput" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" aria-label="Passcode" placeholder="••••">
+    <div class="lock-pad" id="lockPad">
+      <button type="button" class="lock-key" data-k="1">1</button><button type="button" class="lock-key" data-k="2">2</button><button type="button" class="lock-key" data-k="3">3</button>
+      <button type="button" class="lock-key" data-k="4">4</button><button type="button" class="lock-key" data-k="5">5</button><button type="button" class="lock-key" data-k="6">6</button>
+      <button type="button" class="lock-key" data-k="7">7</button><button type="button" class="lock-key" data-k="8">8</button><button type="button" class="lock-key" data-k="9">9</button>
+      <button type="button" class="lock-key fn" data-k="clear">Clear</button><button type="button" class="lock-key" data-k="0">0</button><button type="button" class="lock-key fn" data-k="back">⌫</button>
+    </div>
+    <div class="lock-msg" id="lockMsg" role="alert"></div>
+  </form>
+</div>
 
 <div class="app">
   <!-- ============================= SIDEBAR ============================= -->
@@ -402,6 +541,15 @@ footer.credits{margin-top:34px; font-size:11.5px; color:var(--muted); line-heigh
     </div>
 
     <button class="reset-btn" id="resetBtn">Reset all inputs to preset defaults</button>
+
+    <div class="io-row">
+      <button class="io-btn" id="exportScenarioBtn" title="Save all current inputs to a .json file">⬇ Export scenario</button>
+      <button class="io-btn" id="importScenarioBtn" title="Load inputs from a previously exported .json file">⬆ Import scenario</button>
+    </div>
+    <button class="io-btn io-btn-wide" id="exportCsvBtn" title="Save the year-by-year cash-flow table for the current scenario as a .csv file">⬇ Export cash-flow table (.csv)</button>
+    <input type="file" id="importScenarioInput" accept="application/json,.json" style="display:none;">
+    <div class="io-status" id="ioStatus"></div>
+
     <footer class="credits">Model structure follows a 20-year, actual-dollar (nominal) after-tax cash flow analysis with MACRS depreciation, loan amortization, and an investment tax credit — consistent with an engineering-economics treatment of agrivoltaic investment decisions.</footer>
   </aside>
 
@@ -409,7 +557,10 @@ footer.credits{margin-top:34px; font-size:11.5px; color:var(--muted); line-heigh
   <main class="main">
     <div class="topbar">
       <h1 style="font-size:22px;">Economic Assessment</h1>
-      <div class="scenario" id="scenarioLabel"></div>
+      <div class="topbar-right">
+        <div class="scenario" id="scenarioLabel"></div>
+        <button class="lock-btn" id="lockNowBtn" type="button" title="Lock the app">🔒 Lock</button>
+      </div>
     </div>
 
     <div class="tabs" id="tabs">
@@ -506,8 +657,8 @@ function runModel(inp){
   const nominalRate = inp.realMARR + inp.inflation + inp.realMARR*inp.inflation;
 
   const actualPower   = hasPV ? inp.potentialPower*(1-inp.powerReduction) : 0;
-  const pvFixedPerAcre= hasPV ? actualPower*inp.costPerW*1000 : 0;
-  const pvOMPerAcre   = hasPV ? inp.omPerKW*actualPower : 0;
+  const pvFixedPerAcre= hasPV ? actualPower*inp.costPerW*1000 + (inp.pvExtraCapitalPerAcre||0) : 0;
+  const pvOMPerAcre   = hasPV ? inp.omPerKW*actualPower + (inp.pvExtraOperatingPerAcre||0) : 0;
   const pvIncomePerAcre = hasPV ? actualPower*inp.sunHours*365*inp.energyPrice : 0;
   const pvSalvagePerAcre = hasPV ? inp.salvagePct*pvFixedPerAcre : 0;
 
@@ -605,67 +756,126 @@ function runModel(inp){
 /* =====================================================================
    PRESETS
    ===================================================================== */
+// UC Davis cost-study major categories used to group itemized line items.
+const CAPEX_CATEGORIES = ["Equipment & Machinery", "Irrigation System", "Buildings & Improvements", "Land Preparation / Establishment", "Other Capital"];
+const OPEX_CATEGORIES = ["Cultural Operations", "Irrigation", "Harvest & Post-Harvest", "Cash Overhead", "Other Operating"];
+const PV_CAPEX_CATEGORIES = ["Interconnection & Permitting", "Site Improvements", "Fencing & Security", "Other Capital"];
+const PV_OPEX_CATEGORIES = ["Insurance", "Land Lease", "Monitoring & Software", "Other Operating"];
+
 const CROP_PRESETS = {
   tomato: {
-    name:"Processing Tomato", note:"Sacramento Valley cost study — the project baseline.",
-    source:"good",
-    cropYield:42, cropPrice:138, cropOpex:4163, cropIrrig:632, cropCapital:5522, cropSalvageConst:1037,
-    unit:"tons/acre"
+    name:"Processing Tomato", note:"Sacramento Valley, 2023 cost &amp; return study — the project baseline.",
+    source:"good", caveat:"The source study gives cultural, harvest &amp; overhead as one combined operating figure — shown here as a single line rather than a fabricated split.",
+    sourceLabel:"UC Davis Cost Study — Processing Tomato, Sacramento Valley (2023)",
+    sourceUrl:"https://coststudyfiles.ucdavis.edu/uploads/pub/2023/08/21/amended_82123_2023processtomatosacramentovalleysdifinal.pdf",
+    cropYield:42, cropPrice:138, cropSalvageConst:1037,
+    unit:"tons/acre",
+    capitalItems:[
+      {category:"Equipment & Machinery", name:"Tractors, harvester, pumps & irrigation pipe", amount:5522},
+    ],
+    operatingItems:[
+      {category:"Irrigation", name:"Water licensing, pumping & distribution", amount:632},
+      {category:"Cultural Operations", name:"Tilling, planting, spraying, weeding, harvesting, packaging & overhead (combined, as reported)", amount:4163},
+    ]
   },
   grapes: {
-    name:"Wine Grapes", note:"Illustrative default — edit to match your varietal &amp; region.",
-    source:"warn",
-    cropYield:6, cropPrice:950, cropOpex:3200, cropIrrig:420, cropCapital:9500, cropSalvageConst:1800,
-    unit:"tons/acre"
+    name:"Wine Grapes (Cabernet Sauvignon)", note:"San Joaquin Valley North / Lodi, 2021 cost &amp; return study.",
+    source:"good",
+    caveat:"Capital cost is the full 3-year establishment cost (land prep, trellis, drip system, vines) through first harvest — the standard way UC Davis budgets a new vineyard — shown as one line since the study doesn't break it into sub-items. Study confirms $0 salvage value for the planting itself after its ~22-year productive life.",
+    sourceLabel:"UC Davis Cost Study — Wine Grapes, San Joaquin Valley North (2021)",
+    sourceUrl:"https://coststudyfiles.ucdavis.edu/uploads/pub/2022/02/28/2021_grapewinelodi_22522.pdf",
+    cropYield:10, cropPrice:600, cropSalvageConst:0,
+    unit:"tons/acre",
+    capitalItems:[
+      {category:"Land Preparation / Establishment", name:"Land prep, trellis, drip system & vines (3-yr establishment to first harvest)", amount:26313},
+    ],
+    operatingItems:[
+      {category:"Irrigation", name:"Pumped water & labor (18 ac-in/yr)", amount:400},
+      {category:"Cultural Operations", name:"Pruning, pest management, fertilization, canopy management & harvest", amount:2279},
+    ]
   },
   lettuce: {
-    name:"Romaine Lettuce", note:"Illustrative default — edit to match your data.",
-    source:"warn",
-    cropYield:32, cropPrice:480, cropOpex:6100, cropIrrig:520, cropCapital:3600, cropSalvageConst:700,
-    unit:"tons/acre"
+    name:"Romaine Hearts Lettuce", note:"Central Coast (Salinas–Watsonville), 2023 cost &amp; return study.",
+    source:"good",
+    caveat:"Yield &amp; price converted from the study's native units (850 22-lb cartons/acre at $24/carton). Investment line items sum to $3,308/acre against the study's stated $3,309 total (rounding). Equipment salvage value wasn't itemized in the study; estimated at the tomato study's investment-to-salvage ratio.",
+    sourceLabel:"UC Davis Cost Study — Romaine Hearts Lettuce, Central Coast (2023)",
+    sourceUrl:"https://coststudyfiles.ucdavis.edu/uploads/pub/2023/08/04/2023-romheartslettuce-full-final.pdf",
+    cropYield:9.35, cropPrice:2182, cropSalvageConst:621,
+    unit:"tons/acre",
+    capitalItems:[
+      {category:"Equipment & Machinery", name:"Field & shop equipment", amount:1990},
+      {category:"Irrigation System", name:"Drip system, sprinkler system & sprinkler pipe", amount:1234},
+      {category:"Buildings & Improvements", name:"Building, fuel tanks & shop tools", amount:84},
+    ],
+    operatingItems:[
+      {category:"Irrigation", name:"Water (12 ac-in) & single-use drip tape", amount:582},
+      {category:"Cultural Operations", name:"Pre-harvest growing operations", amount:4642},
+      {category:"Harvest & Post-Harvest", name:"Harvest, cooling & hauling", amount:8955},
+      {category:"Cash Overhead", name:"Land rent", amount:1600},
+      {category:"Cash Overhead", name:"Insurance, food safety, regulatory, office & repairs", amount:568},
+    ]
   },
-  alfalfa: {
-    name:"Alfalfa Hay", note:"Illustrative default — edit to match your data.",
-    source:"warn",
-    cropYield:8, cropPrice:230, cropOpex:900, cropIrrig:460, cropCapital:1800, cropSalvageConst:400,
-    unit:"tons/acre"
+  strawberry: {
+    name:"Strawberries (conventional)", note:"Central Coast, 2024 cost &amp; return study.",
+    source:"good",
+    caveat:"Yield, price &amp; total cost per acre are as published (9,000 8-lb trays/acre at $11/tray; the study reports this as a loss-making year above total cost). The split into irrigation / cultural+harvest / capital below is a reasonable engineering allocation, not itemized line-by-line in the source — adjust if you have your own breakdown.",
+    sourceLabel:"UC Davis Cost Study — Strawberries, Central Coast (2024), via Giannini Foundation ARE Update",
+    sourceUrl:"https://coststudyfiles.ucdavis.edu/2024/04/04/2024Strawberry-FULL-FINAL-March2024.pdf",
+    cropYield:36, cropPrice:2750, cropSalvageConst:1200,
+    unit:"tons/acre",
+    capitalItems:[
+      {category:"Equipment & Machinery", name:"Raised beds, drip & field equipment (estimated allocation)", amount:8000},
+    ],
+    operatingItems:[
+      {category:"Irrigation", name:"Drip irrigation water & materials (estimated)", amount:900},
+      {category:"Cultural Operations", name:"Planting, fumigation, fertilization & pest control (estimated)", amount:35000},
+      {category:"Harvest & Post-Harvest", name:"Hand-harvest labor, cooling & packing (estimated — UC Davis total less the above)", amount:75800},
+    ]
   },
   custom: {
     name:"Custom Crop", note:"Enter your own crop economics.",
-    source:"warn",
-    cropYield:20, cropPrice:300, cropOpex:3000, cropIrrig:500, cropCapital:4000, cropSalvageConst:800,
-    unit:"tons/acre"
+    source:"warn", caveat:null, sourceLabel:null, sourceUrl:null,
+    cropYield:20, cropPrice:300, cropSalvageConst:800,
+    unit:"tons/acre",
+    capitalItems:[
+      {category:"Equipment & Machinery", name:"Equipment & machinery", amount:4000},
+    ],
+    operatingItems:[
+      {category:"Irrigation", name:"Irrigation", amount:500},
+      {category:"Cultural Operations", name:"Cultural operations", amount:2000},
+      {category:"Cash Overhead", name:"Cash overhead", amount:1000},
+    ]
   }
 };
 
 const SYSTEM_PRESETS = {
   none: {
     name:"No PV — Crop Only", note:"“Do nothing” baseline: cultivate without any PV hardware.",
-    hasPV:false
+    hasPV:false, extraCapitalItems:[], extraOperatingItems:[]
   },
   vertical: {
     name:"Vertical Bifacial PV", note:"Panels stood on edge between crop rows.",
     hasPV:true,
     potentialPower:400, powerReduction:0.40, costPerW:1.8, omPerKW:19, salvagePct:0.05,
-    yieldImpact:-0.15, irrigImpact:-0.05
+    yieldImpact:-0.15, irrigImpact:-0.05, extraCapitalItems:[], extraOperatingItems:[]
   },
   fixedTilt: {
     name:"Fixed-Tilt Elevated PV", note:"Panels elevated over the crop canopy at a fixed tilt.",
     hasPV:true,
     potentialPower:550, powerReduction:0.75, costPerW:2.0, omPerKW:22, salvagePct:0.15,
-    yieldImpact:-0.20, irrigImpact:-0.25
+    yieldImpact:-0.20, irrigImpact:-0.25, extraCapitalItems:[], extraOperatingItems:[]
   },
   tracking: {
     name:"Elevated Single-Axis Tracking PV", note:"Extension: tracking array trades higher cost for more energy &amp; less fixed shading.",
     hasPV:true,
     potentialPower:480, powerReduction:0.55, costPerW:2.35, omPerKW:24, salvagePct:0.12,
-    yieldImpact:-0.12, irrigImpact:-0.10
+    yieldImpact:-0.12, irrigImpact:-0.10, extraCapitalItems:[], extraOperatingItems:[]
   },
   custom: {
     name:"Custom PV System", note:"Enter your own system specification.",
     hasPV:true,
     potentialPower:450, powerReduction:0.50, costPerW:1.9, omPerKW:20, salvagePct:0.10,
-    yieldImpact:-0.15, irrigImpact:-0.10
+    yieldImpact:-0.15, irrigImpact:-0.10, extraCapitalItems:[], extraOperatingItems:[]
   }
 };
 
@@ -680,18 +890,49 @@ const state = {
   rebatePct:0.40, useLoan:true, loanAmount:1500000, loanAPR:0.08, loanTerm:20,
   cropMACRS:5, pvMACRS:5,
 };
-// crop + system field values (copies of preset, independently editable)
-let crop = {...CROP_PRESETS[state.cropKey]};
-let sys = {...SYSTEM_PRESETS[state.systemKey]};
+let itemIdCounter = 1;
+function nextItemId(){ return 'it' + (itemIdCounter++); }
+function deepCloneItems(items){
+  return (items||[]).map(it => ({id: nextItemId(), category: it.category, name: it.name, amount: it.amount}));
+}
+
+// crop + system field values (deep copies of preset, independently editable)
+let crop = null, sys = null;
 
 function applyCropPreset(key){
   state.cropKey = key;
-  crop = {...CROP_PRESETS[key]};
+  const p = CROP_PRESETS[key];
+  crop = {...p, capitalItems: deepCloneItems(p.capitalItems), operatingItems: deepCloneItems(p.operatingItems)};
+  recomputeCropTotals();
 }
 function applySystemPreset(key){
   state.systemKey = key;
-  sys = {...SYSTEM_PRESETS[key]};
+  const p = SYSTEM_PRESETS[key];
+  sys = {...p, extraCapitalItems: deepCloneItems(p.extraCapitalItems), extraOperatingItems: deepCloneItems(p.extraOperatingItems)};
   if(!sys.hasPV){ state.useLoan = false; } else { state.useLoan = true; }
+  recomputeSysExtras();
+}
+applyCropPreset(state.cropKey);
+applySystemPreset(state.systemKey);
+
+/** Sum item.amount, optionally filtered by category. */
+function sumItems(items, excludeCategory, onlyCategory){
+  return (items||[]).reduce((s,it)=>{
+    if(excludeCategory && it.category===excludeCategory) return s;
+    if(onlyCategory && it.category!==onlyCategory) return s;
+    return s + (Number(it.amount)||0);
+  }, 0);
+}
+/** Recompute crop.cropCapital / cropOpex (non-irrigation) / cropIrrig from the itemized lists. */
+function recomputeCropTotals(){
+  crop.cropCapital = sumItems(crop.capitalItems);
+  crop.cropIrrig = sumItems(crop.operatingItems, null, "Irrigation");
+  crop.cropOpex = sumItems(crop.operatingItems, "Irrigation");
+}
+/** Recompute sys extra capital/operating $/acre totals from the itemized lists. */
+function recomputeSysExtras(){
+  sys.extraCapitalPerAcre = sumItems(sys.extraCapitalItems);
+  sys.extraOperatingPerAcre = sumItems(sys.extraOperatingItems);
 }
 
 function currentInputs(){
@@ -705,6 +946,8 @@ function currentInputs(){
     potentialPower: sys.potentialPower||0, powerReduction: sys.powerReduction||0,
     costPerW: sys.costPerW||0, omPerKW: sys.omPerKW||0, salvagePct: sys.salvagePct||0,
     yieldImpact: sys.yieldImpact||0, irrigImpact: sys.irrigImpact||0,
+    pvExtraCapitalPerAcre: sys.hasPV ? (sys.extraCapitalPerAcre||0) : 0,
+    pvExtraOperatingPerAcre: sys.hasPV ? (sys.extraOperatingPerAcre||0) : 0,
     energyPrice: state.energyPrice, sunHours: state.sunHours,
     rebatePct: sys.hasPV ? state.rebatePct : 0,
     useLoan: state.useLoan, loanAmount: state.loanAmount, loanAPR: state.loanAPR, loanTerm: state.loanTerm,
@@ -1043,27 +1286,150 @@ function renderSystemFields(){
   numField(box,{label:'Salvage value', get:()=>sys.salvagePct, set:v=>sys.salvagePct=v, isPct:true, step:1, suffix:'of investment'});
   numField(box,{label:'Yield impact on crop', get:()=>sys.yieldImpact, set:v=>sys.yieldImpact=v, isPct:true, step:1});
   numField(box,{label:'Irrigation cost impact', get:()=>sys.irrigImpact, set:v=>sys.irrigImpact=v, isPct:true, step:1});
+
+  box.appendChild(h('div',{class:'item-divider'},'Additional costs, on top of the calculated system above'));
+  renderItemEditor(box, {
+    items: sys.extraCapitalItems, categories: PV_CAPEX_CATEGORIES,
+    title:'Additional capital expenses', unitSuffix:'$/acre', addLabel:'+ Add capital item',
+    onChange: ()=>{ recomputeSysExtras(); renderSidebar(); scheduleRender(); }
+  });
+  renderItemEditor(box, {
+    items: sys.extraOperatingItems, categories: PV_OPEX_CATEGORIES,
+    title:'Additional operating costs', unitSuffix:'$/acre/yr', addLabel:'+ Add operating item',
+    onChange: ()=>{ recomputeSysExtras(); renderSidebar(); scheduleRender(); }
+  });
+}
+
+/**
+ * Generic itemized cost-line editor: category select + name + $ amount per row,
+ * a running total, and an "add item" row. Mutates `items` (an array reference)
+ * in place; calls `onChange()` after any structural change (add/remove) so the
+ * caller can recompute totals and re-render. Amount/name edits update the
+ * total inline without a full re-render, so the input never loses focus.
+ */
+function renderItemEditor(container, {items, categories, title, unitSuffix, addLabel, onChange}){
+  const wrap = h('div',{class:'item-editor'});
+  wrap.appendChild(h('div',{class:'item-editor-title'},title));
+  const list = h('div',{class:'item-list'});
+  wrap.appendChild(list);
+  const totalRow = h('div',{class:'item-total'});
+  wrap.appendChild(totalRow);
+
+  const updateTotal = ()=>{
+    const total = items.reduce((s,it)=>s+(Number(it.amount)||0),0);
+    totalRow.innerHTML = `<span>Total</span><span class="mono">${fmt$(total)} <span class="hint">${unitSuffix}</span></span>`;
+  };
+
+  function drawRow(it){
+    const row = h('div',{class:'item-row'});
+    const catSel = document.createElement('select');
+    catSel.className = 'item-cat';
+    const cats = categories.includes(it.category) ? categories : [it.category, ...categories];
+    cats.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; if(c===it.category)o.selected=true; catSel.appendChild(o); });
+    catSel.addEventListener('change', ()=>{ it.category = catSel.value; });
+
+    const nameInp = document.createElement('input');
+    nameInp.type='text'; nameInp.className='item-name'; nameInp.value = it.name; nameInp.placeholder='Line item name';
+    nameInp.addEventListener('input', ()=>{ it.name = nameInp.value; });
+
+    const amtInp = document.createElement('input');
+    amtInp.type='number'; amtInp.className='item-amt'; amtInp.value = it.amount; amtInp.step='any';
+    amtInp.addEventListener('input', ()=>{
+      const v = parseFloat(amtInp.value); it.amount = isNaN(v)?0:v;
+      updateTotal(); onChange && onChangeInline();
+    });
+
+    const delBtn = document.createElement('button');
+    delBtn.type='button'; delBtn.className='item-del'; delBtn.title='Remove item'; delBtn.innerHTML='×';
+    delBtn.addEventListener('click', ()=>{
+      const idx = items.indexOf(it); if(idx>-1) items.splice(idx,1);
+      onChange && onChange();
+    });
+
+    row.appendChild(catSel); row.appendChild(nameInp); row.appendChild(amtInp); row.appendChild(delBtn);
+    list.appendChild(row);
+  }
+  // inline change (amount edit) recomputes engine totals silently, without rebuilding the DOM
+  function onChangeInline(){
+    // caller's onChange rebuilds the sidebar (loses focus) — for inline typing we only
+    // need the derived totals recomputed and the model re-run, not a redraw.
+    if(items===crop.capitalItems || items===crop.operatingItems) recomputeCropTotals();
+    if(items===sys.extraCapitalItems || items===sys.extraOperatingItems) recomputeSysExtras();
+    scheduleRender();
+  }
+
+  items.forEach(drawRow);
+  updateTotal();
+
+  const addRow = h('div',{class:'item-row item-add-row'});
+  const addCat = document.createElement('select'); addCat.className='item-cat';
+  categories.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; addCat.appendChild(o); });
+  const addName = document.createElement('input'); addName.type='text'; addName.className='item-name'; addName.placeholder='New line item…';
+  const addAmt = document.createElement('input'); addAmt.type='number'; addAmt.className='item-amt'; addAmt.placeholder='0'; addAmt.step='any';
+  const addBtn = document.createElement('button'); addBtn.type='button'; addBtn.className='item-add-btn'; addBtn.textContent='Add';
+  addBtn.addEventListener('click', ()=>{
+    const amt = parseFloat(addAmt.value)||0;
+    const name = addName.value.trim() || 'New item';
+    items.push({id: nextItemId(), category: addCat.value, name, amount: amt});
+    onChange && onChange();
+  });
+  addRow.appendChild(addCat); addRow.appendChild(addName); addRow.appendChild(addAmt); addRow.appendChild(addBtn);
+  wrap.appendChild(addRow);
+  const addHint = h('div',{class:'hint', style:'margin-top:4px;'}, addLabel);
+  wrap.appendChild(addHint);
+
+  container.appendChild(wrap);
 }
 
 function renderCropPresets(){
   const box = document.getElementById('cropPresets');
   box.innerHTML='';
+
+  const wrap = h('div',{class:'field'});
+  wrap.appendChild(h('label',{},'<span>Crop</span>'));
+  const sel = document.createElement('select');
   Object.entries(CROP_PRESETS).forEach(([key,c])=>{
-    const card = h('div',{class:'preset-card'+(key===state.cropKey?' active':'')});
-    card.innerHTML = `<div class="pt">${c.name} <span class="badge crop" style="margin-left:4px;">${c.source==='good'?'sourced':'estimate'}</span></div><div class="ps">${c.note}</div>`;
-    card.addEventListener('click', ()=>{ applyCropPreset(key); renderSidebar(); scheduleRender(); });
-    box.appendChild(card);
+    const opt = document.createElement('option');
+    opt.value = key;
+    opt.textContent = c.name + (c.source==='good' ? '  (UC Davis sourced)' : '');
+    if(key===state.cropKey) opt.selected = true;
+    sel.appendChild(opt);
   });
+  sel.addEventListener('change', ()=>{ applyCropPreset(sel.value); renderSidebar(); scheduleRender(); });
+  wrap.appendChild(sel);
+  box.appendChild(wrap);
+
+  const c = CROP_PRESETS[state.cropKey];
+  const info = h('div',{class:'crop-info'});
+  let html = `<div class="ci-top"><span class="badge crop">${c.source==='good'?'UC Davis sourced':'estimate — edit me'}</span></div>
+    <div class="ci-note">${c.note}</div>`;
+  if(c.sourceUrl){
+    html += `<a class="ci-link" href="${c.sourceUrl}" target="_blank" rel="noopener">📄 ${c.sourceLabel}</a>`;
+  }
+  if(c.caveat){
+    html += `<div class="ci-caveat">${c.caveat}</div>`;
+  }
+  info.innerHTML = html;
+  box.appendChild(info);
 }
 function renderCropFields(){
   const box = document.getElementById('cropFields');
   box.innerHTML='';
   numField(box,{label:'Yield (no-PV baseline)', get:()=>crop.cropYield, set:v=>crop.cropYield=v, suffix:'tons/acre', step:0.5, digits:1});
   numField(box,{label:'Price', get:()=>crop.cropPrice, set:v=>crop.cropPrice=v, suffix:'$/ton', step:1});
-  numField(box,{label:'Operating cost', get:()=>crop.cropOpex, set:v=>crop.cropOpex=v, suffix:'$/acre/yr', step:10});
-  numField(box,{label:'Irrigation cost (no-PV)', get:()=>crop.cropIrrig, set:v=>crop.cropIrrig=v, suffix:'$/acre/yr', step:10});
-  numField(box,{label:'Capital (equipment) cost', get:()=>crop.cropCapital, set:v=>crop.cropCapital=v, suffix:'$/acre', step:50});
   numField(box,{label:'Equipment salvage value', get:()=>crop.cropSalvageConst, set:v=>crop.cropSalvageConst=v, suffix:'$/acre, constant $', step:10});
+
+  box.appendChild(h('div',{class:'item-divider'},'Itemized costs (per acre) — add, edit or remove line items'));
+  renderItemEditor(box, {
+    items: crop.capitalItems, categories: CAPEX_CATEGORIES,
+    title:'Capital expenses', unitSuffix:'$/acre', addLabel:'+ Add capital item',
+    onChange: ()=>{ recomputeCropTotals(); renderSidebar(); scheduleRender(); }
+  });
+  renderItemEditor(box, {
+    items: crop.operatingItems, categories: OPEX_CATEGORIES,
+    title:'Operating costs (incl. irrigation)', unitSuffix:'$/acre/yr', addLabel:'+ Add operating item',
+    onChange: ()=>{ recomputeCropTotals(); renderSidebar(); scheduleRender(); }
+  });
 }
 
 function renderSiteFields(){
@@ -1137,6 +1503,177 @@ document.getElementById('resetBtn').addEventListener('click', ()=>{
 
 document.querySelectorAll('.section-head').forEach(sh=>{
   sh.addEventListener('click', ()=> sh.parentElement.classList.toggle('collapsed'));
+});
+
+/* =====================================================================
+   IMPORT / EXPORT — scenario inputs (JSON) and results (CSV)
+   Saves go through the platform "downloads" capability when this page is
+   running as a published Artifact; otherwise fall back to a plain
+   Blob + <a download> link, which works in the standalone HTML file.
+   ===================================================================== */
+let _downloadsCap; // undefined = not yet resolved, null = unavailable
+async function getDownloadsCap(){
+  if(_downloadsCap !== undefined) return _downloadsCap;
+  try{
+    if(window.claude && typeof window.claude.use === 'function'){
+      _downloadsCap = await window.claude.use('downloads');
+    } else {
+      _downloadsCap = null;
+    }
+  }catch(e){ _downloadsCap = null; }
+  return _downloadsCap;
+}
+
+function ioStatusMsg(msg, kind){
+  const el = document.getElementById('ioStatus');
+  if(!el) return;
+  el.textContent = msg;
+  el.className = 'io-status' + (kind ? ' '+kind : '');
+  if(msg) setTimeout(()=>{ if(el.textContent===msg){ el.textContent=''; el.className='io-status'; } }, 5000);
+}
+
+async function saveFile(filename, dataStr, mimeType){
+  const cap = await getDownloadsCap();
+  if(cap){
+    try{
+      await cap.save({filename, data: dataStr});
+      ioStatusMsg('Saved '+filename, 'ok');
+      return;
+    }catch(err){
+      if(err && err.code === 'declined'){ return; } // user said no — silent
+      // fall through to Blob fallback on any other capability error
+    }
+  }
+  try{
+    const blob = new Blob([dataStr], {type: mimeType || 'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url), 2000);
+    ioStatusMsg('Saved '+filename, 'ok');
+  }catch(err){
+    ioStatusMsg('Could not save file — try again.', 'err');
+  }
+}
+
+const SCENARIO_FILE_VERSION = 1;
+
+function serializeScenario(){
+  return {
+    _type:'agrivolt-ledger-scenario', _version: SCENARIO_FILE_VERSION, savedAt: new Date().toISOString(),
+    state: {...state},
+    crop: {
+      cropYield: crop.cropYield, cropPrice: crop.cropPrice, cropSalvageConst: crop.cropSalvageConst,
+      capitalItems: crop.capitalItems.map(it=>({category:it.category, name:it.name, amount:it.amount})),
+      operatingItems: crop.operatingItems.map(it=>({category:it.category, name:it.name, amount:it.amount})),
+    },
+    sys: sys.hasPV ? {
+      potentialPower: sys.potentialPower, powerReduction: sys.powerReduction,
+      costPerW: sys.costPerW, omPerKW: sys.omPerKW, salvagePct: sys.salvagePct,
+      yieldImpact: sys.yieldImpact, irrigImpact: sys.irrigImpact,
+      extraCapitalItems: (sys.extraCapitalItems||[]).map(it=>({category:it.category, name:it.name, amount:it.amount})),
+      extraOperatingItems: (sys.extraOperatingItems||[]).map(it=>({category:it.category, name:it.name, amount:it.amount})),
+    } : null,
+  };
+}
+
+function applyScenario(data){
+  if(!data || typeof data !== 'object' || !data.state) throw new Error('Not a recognized scenario file.');
+  const s = data.state;
+  if(!CROP_PRESETS[s.cropKey] || !SYSTEM_PRESETS[s.systemKey]) throw new Error('Scenario references an unknown crop or system preset.');
+
+  applyCropPreset(s.cropKey);
+  applySystemPreset(s.systemKey);
+
+  Object.assign(state, {
+    fieldArea: numOr(s.fieldArea, state.fieldArea), years: numOr(s.years, state.years),
+    realMARR: numOr(s.realMARR, state.realMARR), inflation: numOr(s.inflation, state.inflation),
+    fedTax: numOr(s.fedTax, state.fedTax), stateTax: numOr(s.stateTax, state.stateTax),
+    energyPrice: numOr(s.energyPrice, state.energyPrice), sunHours: numOr(s.sunHours, state.sunHours),
+    rebatePct: numOr(s.rebatePct, state.rebatePct),
+    useLoan: sys.hasPV ? !!s.useLoan : false,
+    loanAmount: numOr(s.loanAmount, state.loanAmount), loanAPR: numOr(s.loanAPR, state.loanAPR), loanTerm: numOr(s.loanTerm, state.loanTerm),
+    cropMACRS: MACRS_CLASSES.includes(s.cropMACRS)?s.cropMACRS:state.cropMACRS,
+    pvMACRS: MACRS_CLASSES.includes(s.pvMACRS)?s.pvMACRS:state.pvMACRS,
+  });
+
+  if(data.crop){
+    const c = data.crop;
+    crop.cropYield = numOr(c.cropYield, crop.cropYield);
+    crop.cropPrice = numOr(c.cropPrice, crop.cropPrice);
+    crop.cropSalvageConst = numOr(c.cropSalvageConst, crop.cropSalvageConst);
+    if(Array.isArray(c.capitalItems)) crop.capitalItems = deepCloneItems(c.capitalItems);
+    if(Array.isArray(c.operatingItems)) crop.operatingItems = deepCloneItems(c.operatingItems);
+    recomputeCropTotals();
+  }
+  if(data.sys && sys.hasPV){
+    const p = data.sys;
+    sys.potentialPower = numOr(p.potentialPower, sys.potentialPower);
+    sys.powerReduction = numOr(p.powerReduction, sys.powerReduction);
+    sys.costPerW = numOr(p.costPerW, sys.costPerW);
+    sys.omPerKW = numOr(p.omPerKW, sys.omPerKW);
+    sys.salvagePct = numOr(p.salvagePct, sys.salvagePct);
+    sys.yieldImpact = numOr(p.yieldImpact, sys.yieldImpact);
+    sys.irrigImpact = numOr(p.irrigImpact, sys.irrigImpact);
+    if(Array.isArray(p.extraCapitalItems)) sys.extraCapitalItems = deepCloneItems(p.extraCapitalItems);
+    if(Array.isArray(p.extraOperatingItems)) sys.extraOperatingItems = deepCloneItems(p.extraOperatingItems);
+    recomputeSysExtras();
+  }
+
+  renderSidebar();
+  scheduleRender();
+}
+function numOr(v, fallback){ return (typeof v === 'number' && isFinite(v)) ? v : fallback; }
+
+document.getElementById('exportScenarioBtn').addEventListener('click', async ()=>{
+  const json = JSON.stringify(serializeScenario(), null, 2);
+  const fname = `agrivolt-scenario-${state.cropKey}-${state.systemKey}.json`;
+  await saveFile(fname, json, 'application/json');
+});
+
+document.getElementById('importScenarioBtn').addEventListener('click', ()=>{
+  document.getElementById('importScenarioInput').click();
+});
+document.getElementById('importScenarioInput').addEventListener('change', (e)=>{
+  const file = e.target.files && e.target.files[0];
+  e.target.value = '';
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const data = JSON.parse(reader.result);
+      applyScenario(data);
+      ioStatusMsg('Imported '+file.name, 'ok');
+    }catch(err){
+      ioStatusMsg('Import failed: '+(err.message||'invalid file'), 'err');
+    }
+  };
+  reader.onerror = ()=> ioStatusMsg('Could not read that file.', 'err');
+  reader.readAsText(file);
+});
+
+function csvEscape(v){
+  const s = String(v);
+  return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s;
+}
+document.getElementById('exportCsvBtn').addEventListener('click', async ()=>{
+  const m = currentModel;
+  const cols = ['n','Capital Exp.','Gross Revenue','Operating Exp.','Depreciation','Capital Gain','Salvage','BTCF','Taxable Income','Tax','ATCF','Discounted ATCF (PV)','Cumulative Discounted CF'];
+  const lines = [cols.map(csvEscape).join(',')];
+  for(let t=0;t<=m.years;t++){
+    lines.push([
+      t, m.CE[t]||0, m.Rev[t]||0, m.OE[t]||0, m.Dep[t]||0, m.CapGain[t]||0, m.Salv[t]||0,
+      m.BTCF[t], t===0?'':m.TI[t], t===0?'':m.Tax[t], m.ATCF[t], m.disc[t], m.cumDisc[t]
+    ].map(csvEscape).join(','));
+  }
+  lines.push('');
+  lines.push(['NPW', m.npw].map(csvEscape).join(','));
+  lines.push(['IRR', isFinite(m.irr)?m.irr:''].map(csvEscape).join(','));
+  lines.push(['Scenario', `${CROP_PRESETS[state.cropKey].name} + ${SYSTEM_PRESETS[state.systemKey].name}, ${state.fieldArea} acres, ${state.years}-yr life`].map(csvEscape).join(','));
+  const csv = lines.join('\n');
+  const fname = `agrivolt-cashflow-${state.cropKey}-${state.systemKey}.csv`;
+  await saveFile(fname, csv, 'text/csv');
 });
 </script>
 
@@ -1516,7 +2053,76 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
 // initial paint
 renderSidebar();
 scheduleRender();
+/* =====================================================================
+   LOCK SCREEN — passcode gate (client-side convenience lock)
+   ===================================================================== */
+(function(){
+  // cyrb53 hash of "agrivolt-ledger:" + passcode; the passcode itself is not stored in plain text.
+  const PASS_HASH = 84801816802770;
+  function cyrb53(str, seed=0){
+    let h1=0xdeadbeef^seed, h2=0x41c6ce57^seed;
+    for(let i=0,ch;i<str.length;i++){ ch=str.charCodeAt(i); h1=Math.imul(h1^ch,2654435761); h2=Math.imul(h2^ch,1597334677); }
+    h1=Math.imul(h1^(h1>>>16),2246822507); h1^=Math.imul(h2^(h2>>>13),3266489909);
+    h2=Math.imul(h2^(h2>>>16),2246822507); h2^=Math.imul(h1^(h1>>>13),3266489909);
+    return 4294967296*(2097151&h2)+(h1>>>0);
+  }
+  const root = document.documentElement;
+  const card = document.getElementById('lockCard');
+  const input = document.getElementById('lockInput');
+  const dots = document.querySelectorAll('#lockDots span');
+  const msg = document.getElementById('lockMsg');
+  let tries = 0, cooldownUntil = 0;
+
+  function paintDots(){ dots.forEach((d,i)=> d.classList.toggle('on', i < input.value.length)); }
+  function setUnlocked(on){
+    try{ if(on) sessionStorage.setItem('agv_unlocked','1'); else sessionStorage.removeItem('agv_unlocked'); }catch(e){}
+  }
+  function unlock(){
+    setUnlocked(true);
+    root.classList.remove('is-locked');
+    input.value=''; paintDots(); msg.textContent='';
+    // charts were measured while hidden — redraw at real size
+    if(typeof scheduleRender === 'function') scheduleRender();
+  }
+  function lock(){
+    setUnlocked(false);
+    root.classList.add('is-locked');
+    input.value=''; paintDots(); msg.textContent='';
+    setTimeout(()=>input.focus(), 30);
+  }
+  function fail(){
+    tries++;
+    msg.textContent = 'Incorrect passcode';
+    card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+    input.value=''; paintDots();
+    if(tries % 5 === 0){ cooldownUntil = Date.now() + 5000; msg.textContent = 'Too many attempts — wait 5 seconds'; }
+  }
+  function check(){
+    if(Date.now() < cooldownUntil){ input.value=''; paintDots(); return; }
+    if(cyrb53('agrivolt-ledger:'+input.value) === PASS_HASH) unlock(); else fail();
+  }
+
+  input.addEventListener('input', ()=>{
+    input.value = input.value.replace(/\D/g,'').slice(0,4);
+    msg.textContent=''; paintDots();
+    if(input.value.length === 4) check();
+  });
+  card.addEventListener('animationend', ()=> card.classList.remove('shake'));
+  card.addEventListener('submit', e=>{ e.preventDefault(); if(input.value.length===4) check(); });
+  document.getElementById('lockPad').addEventListener('click', e=>{
+    const b = e.target.closest('.lock-key'); if(!b) return;
+    const k = b.dataset.k;
+    if(k==='clear') input.value='';
+    else if(k==='back') input.value = input.value.slice(0,-1);
+    else if(input.value.length<4) input.value += k;
+    msg.textContent=''; paintDots();
+    if(input.value.length === 4) check();
+  });
+  document.getElementById('lockNowBtn').addEventListener('click', lock);
+  if(root.classList.contains('is-locked')) setTimeout(()=>input.focus(), 50);
+})();
 </script>
+
 
 
 
